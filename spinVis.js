@@ -10,32 +10,7 @@ var cx = window.innerWidth / 2;
 var cy = window.innerHeight / 2;
 
 var currsong = 0;
-var songs = ['Hounded - Feel So Right ft. Bamiyah.mp3',
-			 'alt-J - In Cold Blood (Baauer Remix).mp3',
-			 'Hazey Eyes - Some Reason (feat. FEELDS).mp3',
-			 'Slow Magic - Waited 4 U (ODESZA Remix).mp3',
-			 'Two Feet - Go Fuck Yourself.mp3',
-			 'San Holo - Raw.mp3',
-			 'XXXTENTACION - Everybody Dies In Their Nightmares.mp3',
-			 'ODESZA - My Friends Never Die.mp3',
-			 'ODESZA - If There\'s Time.mp3',
-			 'San Holo - Still Looking (CESQEAUX Remix).mp3',
-			 'Mr. Carmack - Pay For What (Alexander Lewis Remix).mp3',
-			 'Matbow - Trap King.mp3',
-			 'Marshmello - Alone.mp3',
-			 'Hucci & The Ninetys - OC.mp3',
-			 'Hucci - Wings.mp3',
-			 'Unknown.mp3',
-			 'Hippie Sabotage - Your Soul.mp3',
-			 'Flume ft. Tove Lo - Say It.mp3',
-			 'Dyrisk & FlyBoy - Over You.mp3',
-			 'Charles Murdoch - IMG_2050.mp3',
-			 'Aero Chord - Surface.mp3',
-			 'hail satan.mp3',
-			 'ZHU - Faded (ODESZA Remix).mp3',
-			 'weird inside - no more heroes.mp3',
-			 'Two Feet - Had Some Drinks.mp3',
-			 'The Lighthouse & the Whaler - Venice (Adam Snow Remix).mp3'];
+var songs = ['Slow Magic - Waited 4 U (ODESZA Remix).mp3'];
 
 songname.innerHTML = songs[currsong].substring(0,songs[currsong].lastIndexOf('.'));
 
