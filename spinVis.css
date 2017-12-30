@@ -3,6 +3,11 @@
 	src: url("Comfortaa-Regular.ttf");
 }
 
+@font-face {
+	font-family: geosans;
+	src: url("GeosansLight.ttf");
+}
+
 html, body{
 	overflow: hidden;
 	width: 100%;
@@ -27,11 +32,53 @@ p{
 	font-size: 25px;
 	margin-top: 15px;
 	margin-left: 15px;
+	height: 30px;
 }
 
 .time{
 	font-size: 20px;
 	margin-left: 15px;
+	height: 20px;
+}
+
+.menu{
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	height: 60px;
+	width: 100%;
+	line-height: 60px;
+
+	animation-timing-function: ease-out;
+	animation-fill-mode: forwards;
+	animation-duration: .4s;
+}
+
+.openfile{
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+}
+
+.openlabel{
+	font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+	font-size: 50px;
+
+	cursor: pointer;
+
+	color: rgb(0,0,0);
+	margin-left: 20px;
+	opacity: inherit;
+}
+
+.hiding{
+	animation-name: hide;
+}
+
+.showing{
+	animation-name: show;
 }
 
 .c{
@@ -40,4 +87,24 @@ p{
 	top: 0px;
 	margin: 0;
 	padding: 0;
+
+	pointer-events: none;
+}
+
+@keyframes hide{
+	from{
+		opacity: 1;
+	}
+	to{
+		opacity: 0;
+	}
+}
+
+@keyframes show{
+	from{
+		opacity: 0;
+	}
+	to{
+		opacity: 1;
+	}
 }
