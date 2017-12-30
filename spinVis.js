@@ -1,7 +1,3 @@
-var AudioContext = window.AudioContext
-	|| window.webkitAudioContext
-	|| false;
-
 var c = document.getElementById("c");
 c.width = window.innerWidth;
 c.height = window.innerHeight;
