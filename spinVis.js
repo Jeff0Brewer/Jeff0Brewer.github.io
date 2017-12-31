@@ -1,3 +1,6 @@
+var AudioContext = window.AudioContext
+	|| window.webkitAudioContext;
+
 var c = document.getElementById("c");
 c.width = window.innerWidth;
 c.height = window.innerHeight;
@@ -21,7 +24,6 @@ var analyser = actx.createAnalyser();
 audioSrc.connect(analyser);
 audioSrc.connect(actx.destination);
 var fData = new Uint8Array(analyser.frequencyBinCount);
-audio.play();
 
 var clockmax = 400;
 var clockmin = 325;
