@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>fly vis</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+  <body onresize="resize()">
+    <canvas class="c" id="canvas"></canvas>
+
+    <p class="song noselect" id="songname"></p>
+    <p class="time noselect" id="songtime">0:00</p>
+
+    <div class="menu" id="menu">
+    	<input id="file_in" class="openfile" type="file" accept="audio/*" multiple="multiple">
+    	<label id="filebutton" class="button" for="file_in">
+    		<svg width="25" height="25" class="symbol">
+    			<rect width="5" height="25" x="10" y="0"/>
+    			<rect width="25" height="5" x="0" y="10"/>
+    		</svg>
+    	</label>
+
+    	<div id="backsong" class="prevsong button">
+    		<svg width="17" height="15" class="symbol">
+    			<polygon points="17,0 17,15 2,7.5"/>
+    			<rect width="3" height="15" x="0" y="0"/>
+    		</svg>
+    	</div>
+
+    	<div id="playpause" class="playpause button">
+	    	<svg id="play_symbol" width="30" height="30" class="symbol">
+	    		<polygon points="0,0 0,30 30,15"/>
+	    	</svg>
+	    	<svg id="pause_symbol" width="30" height="30" class="symbol" style="visibility: hidden;">
+	    		<rect width="10" height="30" x="1" y="0"/>
+	    		<rect width="10" height="30" x="19" y="0"/>
+	    	</svg>
+    	</div>
+
+    	<div id="skipsong" class="nextsong button">
+    		<svg width="17" height="15" class="symbol">
+    			<polygon points="0,0 0,15 15,7.5"/>
+    			<rect width="3" height="15" x="14" y="0"/>
+    		</svg>
+    	</div>
+
+    	<a id="gitbutton" class="button git" href="https://github.com/Jeff0Brewer/fly_vis" target="_blank">
+    		<div class="gitsymbol symbol"></div>
+    	</a>
+	</div>
+		<script src="_lib/webgl-utils.js"></script>
+		<script src="_lib/webgl-debug.js"></script>
+		<script src="_lib/cuon-utils.js"></script>
+		<script src="_lib/cuon-matrix-quat.js"></script>
+		<script src="_lib/util.js"></script>
+		<script src="_lib/noise.js"></script>
+		<script src="_lib/color_map.js"></script>
+		<script src="_lib/global_gl.js"></script>
+		<script src="_lib/cam_controls.js"></script>
+    <script type="text/javascript" src="song_control.js"></script>
+	  <script type="text/javascript" src="vis_gl.js"></script>
+	  <script type="text/javascript" src="frame.js"></script>
+  </body>
+</html>

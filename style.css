@@ -1,0 +1,152 @@
+@font-face {
+	font-family: comfortaa;
+	src: url("Comfortaa-Regular.ttf");
+}
+
+@font-face {
+	font-family: futrfw;
+	src: url("FUTRFW.TTF");
+}
+
+html, body{
+	overflow: hidden;
+	width: 100%;
+	height: 100%;
+	background: black;
+}
+
+p{
+	font-family: futrfw;
+	color: white;
+
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+svg{
+	fill: white;
+}
+
+.song{
+	font-size: 20px;
+	margin-top: 15px;
+	margin-left: 15px;
+	height: 30px;
+}
+
+.time{
+	font-size: 15px;
+	margin-left: 15px;
+	height: 20px;
+}
+
+.menu{
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	height: 60px;
+	width: 100%;
+	line-height: 60px;
+
+	animation-timing-function: ease-out;
+	animation-fill-mode: forwards;
+	animation-duration: .4s;
+}
+
+.button{
+	float: left;
+	height: 60px;
+	width: 60px;
+	text-align: center;
+	cursor: pointer;
+}
+
+.openfile{
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+}
+
+.playpause{
+	position: absolute;
+	left: calc(50vw - 30px);
+}
+
+.nextsong{
+	position: absolute;
+	left: calc(50vw + 30px);
+}
+
+.prevsong{
+	position: absolute;
+	left: calc(50vw - 90px);
+}
+
+.git{
+	position: absolute;
+	right: 0;
+}
+
+.gitsymbol{
+	display: inline-block;
+	height: 35px;
+	width: 35px;
+
+	background-image: url("gitlogo.png");
+	background-size: cover;
+}
+
+.symbol{
+	position: absolute;
+	top: 50%;
+	bottom: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.hiding{
+	animation-name: hide;
+}
+
+.showing{
+	animation-name: show;
+}
+
+.c{
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	margin: 0;
+	padding: 0;
+
+	pointer-events: none;
+}
+
+.noselect {
+  -webkit-touch-callout: none;
+    -webkit-user-select: none;
+     -khtml-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+}
+
+@keyframes hide{
+	from{
+		opacity: 1;
+	}
+	to{
+		opacity: 0;
+	}
+}
+
+@keyframes show{
+	from{
+		opacity: 0;
+	}
+	to{
+		opacity: 1;
+	}
+}
