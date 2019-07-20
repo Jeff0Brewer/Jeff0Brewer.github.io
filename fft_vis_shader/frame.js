@@ -104,7 +104,7 @@ function main() {
 		analyser.getByteFrequencyData(fData);
 
 		switch_shader(cnv_program);
-		gl.uniform1f(u_Spray, pow_map(average(fData.slice(0, Math.floor(fData.length*.4))), 0, 255, 0, innerHeight*.0001, 3));
+		gl.uniform1f(u_Spray, pow_map(average(fData.slice(0, Math.floor(fData.length*.8))), 0, 255, 0, innerHeight*.0001, 3));
 
 		if(audio.currentTime >= audio.duration)
 			nextsong(false);
