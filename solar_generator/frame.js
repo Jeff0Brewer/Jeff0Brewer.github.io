@@ -49,7 +49,7 @@ function main() {
 
 	let num_planets = Math.floor(Math.random()*8 + 4);
 	planets = [];
-	let iso = generate_isosphere(6);
+	let iso = generate_isosphere(5);
 	for(let i = 0; i < num_planets; i++){
 		planets.push(new Planet(p_fpv, c_fpv, n_fpv, iso));
 		planets[i].init_buffers();
