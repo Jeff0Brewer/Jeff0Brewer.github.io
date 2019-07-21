@@ -1,0 +1,35 @@
+body{
+  background-color: black;
+  overflow-x: hidden;
+  user-select: none;
+}
+
+.hidden{
+  position: fixed;
+  top: -100%;
+  left: -100%;
+  visibility: hidden;
+}
+
+.prompt{
+  width: 95%;
+  text-align: left;
+  font-family: Arial;
+  font-size: 20px;
+  padding: 2.5%;
+  color: white;
+}
+
+.option{
+  width: 40%;
+  float: left;
+  text-align: center;
+  padding: 4%;
+  margin: 1%;
+  background-color: rgb(100,100,100);
+  cursor: pointer;
+
+  font-family: Arial;
+  font-size: 15px;
+  color: white;
+}
