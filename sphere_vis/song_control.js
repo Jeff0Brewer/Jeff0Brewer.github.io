@@ -172,8 +172,6 @@ gitbutton.onmousedown = function(){ gitbutton.style.opacity = clickopacity; }
 gitbutton.onmouseleave = function(){ gitbutton.style.opacity = 1; }
 gitbutton.onmouseup = function(){ gitbutton.style.opacity = 1; }
 
-checkbuttons();
-
 function checkbuttons(){
 	if(currsong == 0){
 		backsong.style.pointerEvents = "none";
