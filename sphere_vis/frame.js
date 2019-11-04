@@ -83,10 +83,11 @@ function main() {
 		let elapsed = now - g_last;
 		g_last = now;
 
-		if(audioctx_initialized)
+		if(audioctx_initialized){
 			analyser.getByteFrequencyData(fData);
-		songtime.innerHTML = Math.floor(audio.currentTime / 60).toString() + ":" + ("0" + Math.floor(audio.currentTime % 60).toString()).slice(-2);
-
+			songtime.innerHTML = Math.floor(audio.currentTime / 60).toString() + ":" + ("0" + Math.floor(audio.currentTime % 60).toString()).slice(-2);
+		}
+			
 		switch_shader(cnv_program);
 		gl.uniform1f(u_Spray, pow_map(average(fData.slice(0, Math.floor(fData.length*.05))), 0, 255, 0, innerHeight*window.devicePixelRatio*.000015, 2));
 
