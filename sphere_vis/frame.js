@@ -83,7 +83,8 @@ function main() {
 		let elapsed = now - g_last;
 		g_last = now;
 
-		analyser.getByteFrequencyData(fData);
+		if(audioctx_initialized)
+			analyser.getByteFrequencyData(fData);
 		songtime.innerHTML = Math.floor(audio.currentTime / 60).toString() + ":" + ("0" + Math.floor(audio.currentTime % 60).toString()).slice(-2);
 
 		switch_shader(cnv_program);
