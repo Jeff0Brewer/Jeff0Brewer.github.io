@@ -1,24 +1,25 @@
+let audioctx_initialized = false;
 function audioctx_init(){
-	var AudioContext = window.AudioContext
+	AudioContext = window.AudioContext
 		|| window.webkitAudioContext;
 
-	var songname = document.getElementById("songname");
-	var songtime = document.getElementById("songtime");
+	songname = document.getElementById("songname");
+	songtime = document.getElementById("songtime");
 
-	var currsong = 0;
-	var songs = [new Song('songe.mp3',
+	currsong = 0;
+	songs = [new Song('songe.mp3',
 						  'ODESZA - Divide (feat. Kelsey Bulkin)')];
 	songname.innerHTML = songs[currsong].name;
 
-	var actx = new AudioContext();
-	var audio = new Audio(songs[currsong].file);
-	var audioSrc = actx.createMediaElementSource(audio);
-	var analyser = actx.createAnalyser();
+	actx = new AudioContext();
+	audio = new Audio(songs[currsong].file);
+	audioSrc = actx.createMediaElementSource(audio);
+	analyser = actx.createAnalyser();
 	analyser.fftSize = 4096;
 	analyser.smoothingTimeConstant = .5;
 	audioSrc.connect(analyser);
 	audioSrc.connect(actx.destination);
-	var fData = new Uint8Array(analyser.frequencyBinCount);
+	fData = new Uint8Array(analyser.frequencyBinCount);
 }
 
 
@@ -118,6 +119,11 @@ playpause.onmousedown = function(){ play_symbol.style.opacity = clickopacity;
 playpause.onmouseleave = function(){ play_symbol.style.opacity = 1;
 									 pause_symbol.style.opacity = 1; }
 playpause.onmouseup = function(){
+	if(!audioctx_initialized){
+		audioctx_init();
+		audioctx_initialized = true;
+	}
+	
 	play_symbol.style.opacity = hoveropacity;
 	pause_symbol.style.opacity = hoveropacity;
 	if(audio.paused){
