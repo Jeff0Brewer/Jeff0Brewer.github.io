@@ -1,23 +1,26 @@
-var AudioContext = window.AudioContext
-	|| window.webkitAudioContext;
+function audioctx_init(){
+	var AudioContext = window.AudioContext
+		|| window.webkitAudioContext;
 
-var songname = document.getElementById("songname");
-var songtime = document.getElementById("songtime");
+	var songname = document.getElementById("songname");
+	var songtime = document.getElementById("songtime");
 
-var currsong = 0;
-var songs = [new Song('songe.mp3',
-					  'ODESZA - Divide (feat. Kelsey Bulkin)')];
-songname.innerHTML = songs[currsong].name;
+	var currsong = 0;
+	var songs = [new Song('songe.mp3',
+						  'ODESZA - Divide (feat. Kelsey Bulkin)')];
+	songname.innerHTML = songs[currsong].name;
 
-var actx = new AudioContext();
-var audio = new Audio(songs[currsong].file);
-var audioSrc = actx.createMediaElementSource(audio);
-var analyser = actx.createAnalyser();
-analyser.fftSize = 4096;
-analyser.smoothingTimeConstant = .5;
-audioSrc.connect(analyser);
-audioSrc.connect(actx.destination);
-var fData = new Uint8Array(analyser.frequencyBinCount);
+	var actx = new AudioContext();
+	var audio = new Audio(songs[currsong].file);
+	var audioSrc = actx.createMediaElementSource(audio);
+	var analyser = actx.createAnalyser();
+	analyser.fftSize = 4096;
+	analyser.smoothingTimeConstant = .5;
+	audioSrc.connect(analyser);
+	audioSrc.connect(actx.destination);
+	var fData = new Uint8Array(analyser.frequencyBinCount);
+}
+
 
 function Song(file, name){
 	this.file = file;
