@@ -76,7 +76,7 @@ function main() {
 	gl.uniformMatrix4fv(u_ViewMatrix, false, viewMatrix.elements);
 
 	var tick = function() {
-		if(audio.currentTime >= audio.duration)
+		if(audioctx_initialized && audio.currentTime >= audio.duration)
 			nextsong(false);
 
 		let now = Date.now();
