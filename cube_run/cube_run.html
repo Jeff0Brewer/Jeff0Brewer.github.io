@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>cube run</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+  <body onresize="resize()">
+    <canvas class="c" id="canvas"></canvas>
+
+    <p class="song noselect" id="songname"></p>
+    <p class="time noselect" id="songtime">0:00</p>
+
+    <div class="menu fade_in" id="menu">
+    	<div class="menutop">
+    		<div class="inline">
+		    	<div class="title" id="title">Cube Run</div>
+		    	<input class="openfile" id="openfile" type="file" accept="audio/*" multiple="multiple">
+		    	<label id="filebutton" class="filebutton" for="openfile">import music</label>
+	    	</div>
+    	</div>
+    	<div class="menubottom">
+	    	<div class="diagram">
+	    		<div class="row">
+	    			<div class="description fleft"></div>
+	    			<div class="smallkey key fleft hidden"></div>
+	    			<div class="description fleft tleft dbottom">move right</div>
+	    			<div class="description fright"></div>
+	    			<div class="smallkey key hidden fright"></div>
+	    			<div class="description fright tright dbottom" id="h0" style="opacity: 0;">prev song</div>
+	    		</div>
+	    		<div class="row">
+	    			<div class="description fleft tright">move left</div>
+	    			<div class="line fleft">
+	    				<svg width="54" height="54" class="symbol">
+			    			<rect width="2" height="27" x="26" y="27"/>
+			    			<rect width="27" height="2" x="0" y="27"/>
+			    		</svg>
+			    	</div>
+	    			<div class="line fleft">
+	    				<svg width="54" height="54" class="symbol">
+			    			<rect width="2" height="54" x="26" y="0"/>
+			    		</svg>
+	    			</div>
+	    			<div class="description fright tleft" id="h1" style="opacity: 0;">next song</div>
+	    			<div class="line fright" id="h2" style="opacity: 0;">
+	    				<svg width="54" height="54" class="symbol">
+			    			<rect width="2" height="27" x="26" y="27"/>
+			    			<rect width="27" height="2" x="27" y="27"/>
+			    		</svg>
+			    	</div>
+	    			<div class="line fright" id="h3" style="opacity: 0;">
+	    				<svg width="54" height="54" class="symbol">
+			    			<rect width="2" height="54" x="26" y="0"/>
+			    		</svg>
+	    			</div>
+	    		</div>
+	    		<div class="row">
+	    			<div class="description fleft"></div>
+		    		<div class="key smallkey fleft">A</div>
+		    		<div class="key smallkey fleft">D</div>
+		    		<div class="description fright"></div>
+		    		<div class="key smallkey fright" id="h4" style="opacity: 0;">
+	    				<svg width="50" height="50" class="symbol">
+	    					<polygon points="30,25 20,20 20,30"/>
+			    		</svg>
+	    			</div>
+		    		<div class="key smallkey fright" id="h5" style="opacity: 0;">
+	    				<svg width="50" height="50" class="symbol">
+	    					<polygon points="20,25 30,20 30,30"/>
+			    		</svg>
+	    			</div>
+		    	</div>
+		    	<div class="row">
+	    			<div class="key spacebar">spacebar</div>
+	    		</div>
+	    		<div class="row">
+	    			<div class="line">
+	    				<svg width="54" height="54" class="symbol">
+			    			<rect width="2" height="54" x="26" y="0"/>
+			    		</svg>
+	    			</div>
+	    		</div>
+	    		<div class="row">
+	    			<div class="description begin dtop" id="begin">begin game</div>
+	    		</div>
+	    	</div>
+    	</div>
+	</div>
+		<script src="webgl-utils.js"></script>
+		<script src="webgl-debug.js"></script>
+		<script src="cuon-utils.js"></script>
+		<script src="cuon-matrix-quat.js"></script>
+		<script src="util.js"></script>
+		<script src="noise.js"></script>
+		<script src="global_gl.js"></script>
+		<script src="cam_controls.js"></script>
+        <script type="text/javascript" src="isosphere.js"></script>
+        <script type="text/javascript" src="tex_fill.js"></script>
+        <script type="text/javascript" src="song_control.js"></script>
+	    <script type="text/javascript" src="game_gl.js"></script>
+	    <script type="text/javascript" src="vis_gl.js"></script>
+	    <script type="text/javascript" src="frame.js"></script>
+  </body>
+</html>

@@ -1,0 +1,241 @@
+@font-face {
+	font-family: roboto;
+	src: url('Roboto-Thin.ttf');
+}
+
+@font-face {
+	font-family: code_bold;
+	src: url('CODE_Bold.otf');
+}
+
+html, body{
+	overflow: hidden;
+	width: 100%;
+	height: 100%;
+	background: rgb(0,0,0);
+}
+
+p{
+	font-family: roboto;
+	color: white;
+
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+svg{
+	fill: white;
+}
+
+.song{
+	position: absolute;
+	font-size: 20px;
+	margin-top: 5px;
+	margin-left: 5px;
+	height: 30px;
+}
+
+.time{
+	position: absolute;
+	font-size: 15px;
+	margin-left: 5px;
+	margin-top: 30px;
+	height: 20px;
+}
+
+.fade_in{
+	animation-name: fade_in;
+	animation-duration: 1s;
+	animation-fill-mode: forwards;
+}
+
+.fade_out{
+	animation-name: fade_out;
+	animation-duration: 1s;
+	animation-fill-mode: forwards;
+}
+
+.menu{
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100vh;
+	width: 100vw;
+	text-align: center;
+	user-select: none;
+
+	background-color: rgba(0, 0, 0, .85);
+}
+
+.menutop{
+	height: 30vh;
+	line-height: 12vh;
+	width: 100vw;
+	overflow: hidden;
+}
+
+.menubottom{
+	height: 70vh;
+	line-height: 70vh;
+	width: 100vw;
+}
+
+.title{
+	color: white;
+	text-align: center;
+	font-size: 15vh;
+	margin-top: 40px;
+
+	/*temp font*/
+	font-family: code_bold;
+}
+
+.openfile{
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+}
+
+.filebutton{
+	color: black;
+	background-color: white;
+	font-size: 30px;
+	width: 300px;
+	height: 45px;
+	line-height: 45px;
+	margin: 10px;
+	display: inline-block;
+	border-radius: 5px;
+
+	/*temp font*/
+	font-family: roboto;
+}
+
+.diagram{
+	display: inline-block;
+	vertical-align: middle;
+	line-height: 0;
+	width: 600px;
+	overflow: hidden;
+}
+
+.row{
+	height: 65px;
+}
+
+.key{
+	color: white;
+	background-color: black;
+	height: 50px;
+	line-height: 50px;
+	border-style: solid;
+	border-color: white;
+	border-width: 2px;
+	border-radius: 5px;
+	margin: 5px;
+	font-size: 17px;
+
+	/*temp font*/
+	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+}
+
+.smallkey{
+	width: 50px;
+}
+
+.line{
+	width: 54px;
+	height: 54px;
+	margin: 5px;
+	display: inline-block;
+	color: white;
+}
+
+.spacebar{
+	width: 350px;
+	display: inline-block;
+}
+
+.description{
+	width: 100px;
+	height: 65px;
+	color: white;
+	display: inline-block;
+	line-height: 65px;
+	font-size: 19px;
+
+	/*temp font*/
+	font-family: roboto;
+}
+
+.begin{
+	width: 100%;
+}
+
+.dbottom{
+	line-height: 105px;
+}
+
+.dtop{
+	line-height: 20px;
+}
+
+.fleft{
+	float: left;
+}
+
+.fright{
+	float: right;
+}
+
+.tleft{
+	text-align: left;
+}
+
+.tright{
+	text-align: right;
+}
+
+.c{
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	margin: 0;
+	padding: 0;
+
+	width: 100vw;
+	height: 100vh;
+
+	pointer-events: none;
+}
+
+.inline{
+	display: inline-block;
+}
+
+.hidden{
+	visibility: hidden;
+}
+
+@keyframes fade_in{
+	from{
+		opacity: 0;
+	}
+
+	to{
+		opacity: 1;
+	}
+}
+
+@keyframes fade_out{
+	from{
+		opacity: 1;
+	}
+
+	to{
+		opacity: 0;
+	}
+}
