@@ -81,7 +81,7 @@ function main() {
 
 	setup_gl();
 	vis = new Vis(p_fpv, c_fpv);
-	game = new Game(p_fpv, c_fpv, 100, 300, .5, .03, .01, 300);
+	game = new Game(p_fpv, c_fpv, 100, 300, .5, .03, .01, 225);
 	fill = new TexFill(p_fpv, t_fpv, 2, 2);
 	init_buffers();
 
