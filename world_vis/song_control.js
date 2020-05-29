@@ -3,7 +3,7 @@ var songtime = document.getElementById("songtime");
 
 var currsong = 0;
 var songs = [new Song('songe.mp3',
-					  'Q Da Fool - Win')];
+					  'COSMIC - Sensei')];
 songname.innerHTML = songs[currsong].name;
 
 function Song(file, name){
