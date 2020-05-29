@@ -302,9 +302,9 @@ class Vis{
 		gl.vertexAttribPointer(this.a_Normal, this.n_fpv, gl.FLOAT, false, this.fsize * this.n_fpv, 0);
 
 		//drawing grid
-		modelMatrix.translate(0, 0, -.001);
+		modelMatrix.translate(0, 0, -.002);
 		gl.uniformMatrix4fv(this.u_ModelMatrix, false, modelMatrix.elements);
-		modelMatrix.translate(0, 0, .001);
+		modelMatrix.translate(0, 0, .002);
 		gl.drawArrays(gl.TRIANGLES, 0, this.pos_buffer_grd.length / this.p_fpv);
 		modelMatrix = popMatrix();
 
