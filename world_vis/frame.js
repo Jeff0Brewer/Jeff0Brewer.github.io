@@ -152,7 +152,7 @@ function main() {
 	worlds.push(new Vis(p_fpv, n_fpv, 8, [2.3, 0, 0], [.1, 0, 1]));
 	worlds.push(new Vis(p_fpv, n_fpv, 7, [2.2*Math.cos(Math.PI*2/3), 1.75*Math.sin(Math.PI*2/3), 0], [-.3*Math.cos(Math.PI*2/3), .3*Math.sin(Math.PI*2/3), 1]));
 	worlds.push(new Vis(p_fpv, n_fpv, 6, [2.1*Math.cos(Math.PI*4/3), 1.5*Math.sin(Math.PI*4/3), 0], [-.3*Math.cos(Math.PI*2/3), -.3*Math.sin(Math.PI*2/3), 1]));
-	dots = new Dots(p_fpv, c_fpv, 2000, [-.5, .5]);
+	dots = new Dots(p_fpv, c_fpv, 2000, [-.7, .7]);
 	fill = new TexFill(p_fpv, t_fpv, 2, 2);
 	init_buffers();
 
@@ -179,9 +179,9 @@ function main() {
 	gl.uniformMatrix4fv(u_ModelMatrix_d, false, modelMatrix.elements);
 
 	gl.uniform1f(u_P0r, worlds[0].scale*1.1);
-	gl.uniform1f(u_P1r, worlds[1].scale*1.15);
-	gl.uniform1f(u_P2r, worlds[2].scale*1.15);
-	gl.uniform1f(u_P3r, worlds[3].scale*1.15);
+	gl.uniform1f(u_P1r, worlds[1].scale*1.1);
+	gl.uniform1f(u_P2r, worlds[2].scale*1.1);
+	gl.uniform1f(u_P3r, worlds[3].scale*1.1);
 
 	var tick = function() {
 		let now = Date.now();
@@ -222,6 +222,11 @@ function main() {
 			view.camera.x = p[0];
 			view.camera.y = p[1];
 			view.camera.z = p[2];
+
+			//Danger mode
+			// view.camera.x = dots.p[0].pos[0][0];
+			// view.camera.y = dots.p[0].pos[0][1];
+			// view.camera.z = dots.p[0].pos[0][2];
 	
 			viewMatrix.setLookAt(view.camera.x, view.camera.y, view.camera.z, view.focus.x, view.focus.y, view.focus.z, 0, 0, 1);
 
@@ -296,6 +301,7 @@ function setup_gl(){
 	gl.enable(gl.BLEND);
 	gl.cullFace(gl.FRONT_AND_BACK);
 	gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+	gl.blendEquation(gl.FUNC_ADD);
 	gl.enable(gl.DEPTH_TEST);
 	gl.clearColor(0,0,0,0);
 
