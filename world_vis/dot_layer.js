@@ -7,27 +7,34 @@ class Dots{
 
 		let as = 2*Math.PI/num;
 		for(let i = 0; i < num; i++){
-			this.p.push(new P_Dot(as*i, norm([Math.cos(as*i), Math.sin(as*i), -5]), (Math.random() > .5 ? -1 : 1) * map(Math.random(), 0, 1, Math.PI/10, Math.PI/3), map(Math.random(), 0, 1, .75, .99), bounds, 1));
+			this.p.push(new P_Dot(as*i, norm([Math.cos(as*i), Math.sin(as*i), -5]), (Math.random() > .5 ? -1 : 1) * map(Math.random(), 0, 1, Math.PI/10, Math.PI/3), pow_map(Math.random(), 0, 1, .8, .995, .5), bounds, 1));
 		}
 
-		this.pos_buffer = new Float32Array(this.p.length*this.p_fpv);
-		this.col_buffer = new Float32Array(this.p.length*this.c_fpv);
-		this.siz_buffer = new Float32Array(this.p.length);
+		this.pos_buffer = new Float32Array(this.p.length*(this.p[0].pos.length + 2)*this.p_fpv);
+		this.col_buffer = new Float32Array(this.p.length*(this.p[0].pos.length + 2)*this.c_fpv);
 
 		let pos_ind = 0;
 		let col_ind = 0;
 		for(let i = 0; i < this.p.length; i++){
-			for(let j = 0; j < this.p[i].pos.length; j++, pos_ind++){
-				this.pos_buffer[pos_ind] = this.p[i].pos[j];
+			let c = Math.floor(Math.random()*3);
+			for(let j = 0; j < this.p[i].pos.length; j++){
+				let d = 1;
+				d += j == 0 ? 1 : 0;
+				d += j == this.p[i].pos.length - 1 ? 1 : 0;
+				for(let b = 0; b < d; b++){
+					for(let l = 0; l < this.p[i].pos[j].length; l++, pos_ind++){
+						this.pos_buffer[pos_ind] = this.p[i].pos[j][l];
+					}
+					let o = d > 1 && (j == 0 || j == this.p[i].pos.length - 1) ? 0 : 1;
+					let s = map(j, 0, this.p[i].pos.length, 0, .75)
+
+					let color = [s, s, s, o];
+					color[c] = 1;
+					for(let l = 0; l < color.length; l++, col_ind++){
+						this.col_buffer[col_ind] = color[l];
+					}
+				}
 			}
-			let s = Math.random()*.5;
-			this.col_buffer[col_ind + 0] = s;
-			this.col_buffer[col_ind + 1] = s;
-			this.col_buffer[col_ind + 2] = s;
-			this.col_buffer[col_ind + i % 3] = 1.0;
-			this.col_buffer[col_ind + 3] = 1.0;
-			col_ind += this.c_fpv;
-			this.siz_buffer[i] = pow_map(Math.random(), 0, 1, .5, 2, 2);
 		}
 	}
 
@@ -49,14 +56,6 @@ class Dots{
 		this.gl_col_buf = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.gl_col_buf);
 		gl.bufferData(gl.ARRAY_BUFFER, this.col_buffer, gl.STATIC_DRAW);
-
-		this.a_Size = gl.getAttribLocation(gl.program, "a_Size");
-		gl.vertexAttribPointer(this.a_Size, 1, gl.FLOAT, false, this.fsize, 0);
-		gl.enableVertexAttribArray(this.a_Size);
-
-		this.gl_siz_buf = gl.createBuffer();
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.gl_siz_buf);
-		gl.bufferData(gl.ARRAY_BUFFER, this.siz_buffer, gl.STATIC_DRAW);
 	}
 
 	draw(u_ModelMatrix){
@@ -64,22 +63,26 @@ class Dots{
 		gl.bufferData(gl.ARRAY_BUFFER, this.pos_buffer, gl.DYNAMIC_DRAW);
 		gl.vertexAttribPointer(this.a_Position, this.p_fpv, gl.FLOAT, false, this.fsize * this.p_fpv, 0);
 
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.gl_siz_buf);
-		gl.vertexAttribPointer(this.a_Size, 1, gl.FLOAT, false, this.fsize, 0);
-
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.gl_col_buf);
 		gl.vertexAttribPointer(this.a_Color, this.c_fpv, gl.FLOAT, false, this.fsize * this.c_fpv, 0);
 
 		gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
-		gl.drawArrays(gl.POINTS, 0, this.pos_buffer.length / this.p_fpv);
+		gl.drawArrays(gl.LINE_STRIP, 0, this.pos_buffer.length / this.p_fpv);
 	}
 
 	update(elapsed, r){
 		let pos_ind = 0;
 		for(let i = 0; i < this.p.length; i++){
 			this.p[i].update(elapsed, r);
-			for(let j = 0; j < this.p[i].pos.length; j++, pos_ind++){
-				this.pos_buffer[pos_ind] = this.p[i].pos[j];
+			for(let j = 0; j < this.p[i].pos.length; j++){
+				let d = 1;
+				d += j == 0 ? 1 : 0;
+				d += j == this.p[i].pos.length - 1 ? 1 : 0;
+				for(let b = 0; b < d; b++){
+					for(let l = 0; l < this.p[i].pos[j].length; l++, pos_ind++){
+						this.pos_buffer[pos_ind] = this.p[i].pos[j][l];
+					}
+				}
 			}
 		}
 	}
@@ -87,7 +90,9 @@ class Dots{
 
 class P_Dot{
 	constructor(angle, axis, spd, size, bounds, scl){
-		this.pos = [0, 0, 0];
+		this.pos = [];
+		for(let i = 0; i < 10; i++)
+			this.pos.push([0, 0, 0]);
 		this.angle = angle;
 		this.axis = axis;
 		this.spd = spd;
@@ -112,11 +117,15 @@ class P_Dot{
 		this.py += this.scl*elapsed/1000;
 		this.pz += this.scl*elapsed/1000;
 
-		this.pos = [
+		let pos = [
 			map(noise.perlin2(this.px, 0), -1, 1, base[0] + this.bounds[0], base[0] + this.bounds[1]),
 			map(noise.perlin2(this.py, 0), -1, 1, base[1] + this.bounds[0], base[1] + this.bounds[1]),
 			map(noise.perlin2(this.pz, 0), -1, 1, base[2] + this.bounds[0], base[2] + this.bounds[1])
 		];
+
+		for(let i = 0; i < this.pos.length - 1; i++)
+			this.pos[i] = this.pos[i + 1];
+		this.pos[this.pos.length - 1] = pos;
 	}
 }
 
