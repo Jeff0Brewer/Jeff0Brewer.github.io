@@ -5,9 +5,20 @@ class Dots{
 
 		this.p = [];
 
+		let f = .2;
+		let axes = [
+			norm([Math.cos(0*Math.PI*2/5)*f, Math.sin(0*Math.PI*2/5)*f, 1]),
+			norm([Math.cos(1*Math.PI*2/5)*f, Math.sin(1*Math.PI*2/5)*f, 1]),
+			norm([Math.cos(2*Math.PI*2/5)*f, Math.sin(2*Math.PI*2/5)*f, 1]),
+			norm([Math.cos(3*Math.PI*2/5)*f, Math.sin(3*Math.PI*2/5)*f, 1]),
+			norm([Math.cos(4*Math.PI*2/5)*f, Math.sin(4*Math.PI*2/5)*f, 1])
+		];
+
+		let colors = [[1], [0, 1], [0], [0, 2], [2]];
+
 		let as = 2*Math.PI/num;
 		for(let i = 0; i < num; i++){
-			this.p.push(new P_Dot(as*i, norm([Math.cos(as*i), Math.sin(as*i), -5]), (Math.random() > .5 ? -1 : 1) * map(Math.random(), 0, 1, Math.PI/10, Math.PI/3), pow_map(Math.random(), 0, 1, .8, .995, .5), bounds, 1));
+			this.p.push(new P_Dot(as*i, axes[i % axes.length], -1*map(Math.random(), 0, 1, Math.PI/10, Math.PI/3), pow_map(Math.random(), 0, 1, .8, .995, .5), mult(bounds, map(Math.random(), 0, 1, .5, 1)), 1));
 		}
 
 		this.pos_buffer = new Float32Array(this.p.length*(this.p[0].pos.length + 2)*this.p_fpv);
@@ -16,7 +27,7 @@ class Dots{
 		let pos_ind = 0;
 		let col_ind = 0;
 		for(let i = 0; i < this.p.length; i++){
-			let c = Math.floor(Math.random()*3);
+			let c = Math.random() < .7 ? i % axes.length : Math.floor(Math.random()*axes.length);
 			for(let j = 0; j < this.p[i].pos.length; j++){
 				let d = 1;
 				d += j == 0 ? 1 : 0;
@@ -26,10 +37,10 @@ class Dots{
 						this.pos_buffer[pos_ind] = this.p[i].pos[j][l];
 					}
 					let o = d > 1 && (j == 0 || j == this.p[i].pos.length - 1) ? 0 : 1;
-					let s = map(j, 0, this.p[i].pos.length, 0, .75)
-
+					let s = map(j, 0, this.p[i].pos.length, 0, 1);
 					let color = [s, s, s, o];
-					color[c] = 1;
+					for(let l = 0; l < colors[c].length; l++)
+						color[colors[c][l]] = 1;
 					for(let l = 0; l < color.length; l++, col_ind++){
 						this.col_buffer[col_ind] = color[l];
 					}
@@ -91,7 +102,7 @@ class Dots{
 class P_Dot{
 	constructor(angle, axis, spd, size, bounds, scl){
 		this.pos = [];
-		for(let i = 0; i < 10; i++)
+		for(let i = 0; i < 8; i++)
 			this.pos.push([0, 0, 0]);
 		this.angle = angle;
 		this.axis = axis;
@@ -100,7 +111,7 @@ class P_Dot{
 		this.r = 0;
 		this.size = size;
 
-		this.st = [Math.cos(-this.angle), Math.sin(-this.angle), 0];
+		this.st = [Math.cos(this.angle), Math.sin(this.angle), 0];
 
 		this.px = Math.random()*100/scl;
 		this.py = Math.random()*100/scl;
@@ -123,37 +134,7 @@ class P_Dot{
 			map(noise.perlin2(this.pz, 0), -1, 1, base[2] + this.bounds[0], base[2] + this.bounds[1])
 		];
 
-		for(let i = 0; i < this.pos.length - 1; i++)
-			this.pos[i] = this.pos[i + 1];
-		this.pos[this.pos.length - 1] = pos;
-	}
-}
-
-class Tr_Dot{
-	constructor(pos, dir, tr, vel){
-		this.pos = pos;
-		this.dir = dir;
-		this.tr = tr;
-		this.vel = vel;
-	}
-
-	update(elapsed, radius){
-		let goal = mult(norm(add(this.pos, this.dir)), radius);
-		goal = add(goal, cross(sub()))
-
-		let axis = norm(cross(sub(goal, this.pos), add(this.pos, this.dir)));
-		let d1 = rotateabout(this.dir, axis, this.tr*elapsed/1000);
-		let d2 = rotateabout(this.dir, axis, -this.tr*elapsed/1000);
-		let p1 = add(this.pos, mult(d1, this.vel*elapsed/1000));
-		let p2 = add(this.pos, mult(d2, this.vel*elapsed/1000));
-
-		if(dist(p1, goal) < dist(p2, goal)){
-			this.pos = p1;
-			this.dir = d1;
-		}
-		else{
-			this.pos = p2;
-			this.dir = d2;
-		}
+		this.pos.shift();
+		this.pos.push(pos);
 	}
 }
