@@ -33,7 +33,6 @@ var FSHADER_TEX =
 var VSHADER_DOT =
 "attribute vec4 a_Position;\n" +
 "attribute vec4 a_Color;\n" +
-"attribute float a_Size;\n" +
 
 "uniform mat4 u_ModelMatrix;\n" +
 "uniform mat4 u_ViewMatrix;\n" +
@@ -72,7 +71,6 @@ var VSHADER_DOT =
 		"pos = normalize(pos - u_P3p)*u_P3r + u_P3p;\n" +
 	"}\n" +
 	"gl_Position = u_ProjMatrix * u_ViewMatrix * u_ModelMatrix * pos;\n" +
-	"gl_PointSize = a_Size*min(60.0, 60.0*(length(pos.xyz) - 1.1)/.25)/pow(gl_Position.w, 1.75);\n" +
 	"v_Color = vec4(a_Color.xyz, length(pos.xyz) <= 1.1 ? 0.0 : a_Color.w);\n" +
 "}\n";
 
@@ -81,10 +79,6 @@ var FSHADER_DOT =
 "varying vec4 v_Color;\n"+
 
 "void main() { \n" +
-	"float r = 0.0;\n" +
-	"vec2 cxy = 2.0 * gl_PointCoord - 1.0;\n" +
-	"r = dot(cxy,cxy);\n" +
-	"if(r > 1.0){discard;}\n" +
 	"gl_FragColor = v_Color;\n" +
 "}";
 
@@ -142,6 +136,7 @@ function main() {
 	view = new CameraController([0, 0, 0], [0, 0, 0], .5, .1, 0);
 	angle = Math.PI/14;
 	d = 6;
+	r = 0;
 	offset = .9;
 	cs = .975;
 
@@ -157,7 +152,7 @@ function main() {
 	worlds.push(new Vis(p_fpv, n_fpv, 8, [2.3, 0, 0], [.1, 0, 1]));
 	worlds.push(new Vis(p_fpv, n_fpv, 7, [2.2*Math.cos(Math.PI*2/3), 1.75*Math.sin(Math.PI*2/3), 0], [-.3*Math.cos(Math.PI*2/3), .3*Math.sin(Math.PI*2/3), 1]));
 	worlds.push(new Vis(p_fpv, n_fpv, 6, [2.1*Math.cos(Math.PI*4/3), 1.5*Math.sin(Math.PI*4/3), 0], [-.3*Math.cos(Math.PI*2/3), -.3*Math.sin(Math.PI*2/3), 1]));
-	dots = new Dots(p_fpv, c_fpv, 4000, [-.5, .5]);
+	dots = new Dots(p_fpv, c_fpv, 2000, [-.5, .5]);
 	fill = new TexFill(p_fpv, t_fpv, 2, 2);
 	init_buffers();
 
@@ -184,9 +179,9 @@ function main() {
 	gl.uniformMatrix4fv(u_ModelMatrix_d, false, modelMatrix.elements);
 
 	gl.uniform1f(u_P0r, worlds[0].scale*1.1);
-	gl.uniform1f(u_P1r, worlds[1].scale*1.1);
-	gl.uniform1f(u_P2r, worlds[2].scale*1.1);
-	gl.uniform1f(u_P3r, worlds[3].scale*1.1);
+	gl.uniform1f(u_P1r, worlds[1].scale*1.15);
+	gl.uniform1f(u_P2r, worlds[2].scale*1.15);
+	gl.uniform1f(u_P3r, worlds[3].scale*1.15);
 
 	var tick = function() {
 		let now = Date.now();
