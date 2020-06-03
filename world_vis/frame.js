@@ -71,7 +71,7 @@ var VSHADER_DOT =
 		"pos = normalize(pos - u_P3p)*u_P3r + u_P3p;\n" +
 	"}\n" +
 	"gl_Position = u_ProjMatrix * u_ViewMatrix * u_ModelMatrix * pos;\n" +
-	"v_Color = vec4(a_Color.xyz, length(pos.xyz) <= 1.1 ? 0.0 : a_Color.w);\n" +
+	"v_Color = vec4(a_Color.xyz, length(pos.xyz) <= 1.2 ? 0.0 : a_Color.w);\n" +
 "}\n";
 
 var FSHADER_DOT =
