@@ -18,7 +18,7 @@ class Dots{
 
 		let as = 2*Math.PI/num;
 		for(let i = 0; i < num; i++){
-			this.p.push(new P_Dot(as*i, axes[i % axes.length], -1*map(Math.random(), 0, 1, Math.PI/10, Math.PI/3), pow_map(Math.random(), 0, 1, .8, .995, .5), mult(bounds, map(Math.random(), 0, 1, .5, 1)), 1));
+			this.p.push(new P_Dot(as*i, axes[i % axes.length], -1*map(Math.random(), 0, 1, Math.PI/10, Math.PI/3), pow_map(Math.random(), 0, 1, .7, .995, .5), mult(bounds, map(Math.random(), 0, 1, .5, 1)), 1));
 		}
 
 		this.pos_buffer = new Float32Array(this.p.length*(this.p[0].pos.length + 2)*this.p_fpv);
@@ -129,10 +129,11 @@ class P_Dot{
 		this.pz += this.scl*elapsed/1000;
 
 		let pos = [
-			map(noise.perlin2(this.px, 0), -1, 1, base[0] + this.bounds[0], base[0] + this.bounds[1]),
-			map(noise.perlin2(this.py, 0), -1, 1, base[1] + this.bounds[0], base[1] + this.bounds[1]),
-			map(noise.perlin2(this.pz, 0), -1, 1, base[2] + this.bounds[0], base[2] + this.bounds[1])
+			map(noise.perlin2(this.px, 0), -1, 1, this.bounds[0], this.bounds[1]),
+			map(noise.perlin2(this.py, 0), -1, 1, this.bounds[0], this.bounds[1]),
+			map(noise.perlin2(this.pz, 0), -1, 1, this.bounds[0], this.bounds[1])
 		];
+		pos = add(pos, base);
 
 		this.pos.shift();
 		this.pos.push(pos);
