@@ -33,10 +33,13 @@ var FSHADER_TEX =
 var VSHADER_DOT =
 "attribute vec4 a_Position;\n" +
 "attribute vec4 a_Color;\n" +
+"attribute float a_Width;\n" +
 
 "uniform mat4 u_ModelMatrix;\n" +
 "uniform mat4 u_ViewMatrix;\n" +
 "uniform mat4 u_ProjMatrix;\n" +
+
+"uniform vec3 u_ScreenNormal;\n" +
 
 "uniform float u_Pow;\n" +
 "uniform float u_Radius;\n" +
@@ -70,7 +73,7 @@ var VSHADER_DOT =
 	"else if(distance(pos, u_P3p) < u_P3r){\n" +
 		"pos = normalize(pos - u_P3p)*u_P3r + u_P3p;\n" +
 	"}\n" +
-	"gl_Position = u_ProjMatrix * u_ViewMatrix * u_ModelMatrix * pos;\n" +
+	"gl_Position = (u_ProjMatrix * u_ViewMatrix * u_ModelMatrix * vec4(pos.xyz + u_ScreenNormal*a_Width, pos.w));\n" +
 	"v_Color = vec4(a_Color.xyz, length(pos.xyz) <= 1.2 ? 0.0 : a_Color.w);\n" +
 "}\n";
 
@@ -152,10 +155,9 @@ function main() {
 	worlds.push(new Vis(p_fpv, n_fpv, 8, [2.3, 0, 0], [.1, 0, 1]));
 	worlds.push(new Vis(p_fpv, n_fpv, 7, [2.2*Math.cos(Math.PI*2/3), 1.75*Math.sin(Math.PI*2/3), 0], [-.3*Math.cos(Math.PI*2/3), .3*Math.sin(Math.PI*2/3), 1]));
 	worlds.push(new Vis(p_fpv, n_fpv, 6, [2.1*Math.cos(Math.PI*4/3), 1.5*Math.sin(Math.PI*4/3), 0], [-.3*Math.cos(Math.PI*2/3), -.3*Math.sin(Math.PI*2/3), 1]));
-	dots = new Dots(p_fpv, c_fpv, 2000, [-.7, .7]);
+	dots = new Dots(p_fpv, c_fpv, 1750, [-.7, .7]);
 	fill = new TexFill(p_fpv, t_fpv, 2, 2);
 	init_buffers();
-
 	setup_tex();
 
 	gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
@@ -177,6 +179,8 @@ function main() {
 	gl.uniformMatrix4fv(u_ProjMatrix_d, false, projMatrix.elements);
 	gl.uniformMatrix4fv(u_ViewMatrix_d, false, viewMatrix.elements);
 	gl.uniformMatrix4fv(u_ModelMatrix_d, false, modelMatrix.elements);
+
+	gl.uniform3fv(u_ScreenNormal, [0, 0, 1]);
 
 	gl.uniform1f(u_P0r, worlds[0].scale*1.1);
 	gl.uniform1f(u_P1r, worlds[1].scale*1.1);
@@ -208,12 +212,6 @@ function main() {
 			let avg = average(f_adj)/255;
 			dots.update(elapsed, pow_map(average(f_adj.slice(0, 3)), 0, 255, .9, 4.5, 2));
 
-			switch_shader(dot_program);
-			gl.uniform4fv(u_P0p, worlds[0].p);
-			gl.uniform4fv(u_P1p, worlds[1].p);
-			gl.uniform4fv(u_P2p, worlds[2].p);
-			gl.uniform4fv(u_P3p, worlds[3].p);
-
 			angle = angle*cs + (1 - cs)*map(avg, 0, 1, .03*Math.PI, .35*Math.PI);
 			d = d*cs + (1 - cs)*map(avg, 0, 1, 3, 5.5)*Math.sqrt(2);
 			offset = offset*cs + (1 - cs)*pow_map(avg, 0, 1, -Math.PI/8, Math.PI/3, 2);
@@ -223,10 +221,12 @@ function main() {
 			view.camera.y = p[1];
 			view.camera.z = p[2];
 
-			//Danger mode
-			// view.camera.x = dots.p[0].pos[0][0];
-			// view.camera.y = dots.p[0].pos[0][1];
-			// view.camera.z = dots.p[0].pos[0][2];
+			switch_shader(dot_program);
+			gl.uniform4fv(u_P0p, worlds[0].p);
+			gl.uniform4fv(u_P1p, worlds[1].p);
+			gl.uniform4fv(u_P2p, worlds[2].p);
+			gl.uniform4fv(u_P3p, worlds[3].p);
+			gl.uniform3fv(u_ScreenNormal, norm(cross([view.camera.x, view.camera.y, view.camera.z], cross([view.camera.x, view.camera.y, view.camera.z], [view.camera.x, view.camera.y, 0]))));
 	
 			viewMatrix.setLookAt(view.camera.x, view.camera.y, view.camera.z, view.focus.x, view.focus.y, view.focus.z, 0, 0, 1);
 
@@ -319,6 +319,7 @@ function setup_gl(){
 	u_ModelMatrix_d = gl.getUniformLocation(gl.program, "u_ModelMatrix");
 	u_ViewMatrix_d= gl.getUniformLocation(gl.program, "u_ViewMatrix");
 	u_ProjMatrix_d = gl.getUniformLocation(gl.program, "u_ProjMatrix");
+	u_ScreenNormal = gl.getUniformLocation(gl.program, "u_ScreenNormal");
 	u_Pow = gl.getUniformLocation(gl.program, "u_Pow");
 	u_Radius = gl.getUniformLocation(gl.program, "u_Radius");
 	u_P0p = gl.getUniformLocation(gl.program, "u_P0p");
