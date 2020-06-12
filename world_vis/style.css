@@ -1,11 +1,6 @@
 @font-face {
 	font-family: comfortaa;
-	src: url("Comfortaa-Regular.ttf");
-}
-
-@font-face {
-	font-family: futrfw;
-	src: url("FUTRFW.TTF");
+	src: url("Comfortaa-Light.ttf");
 }
 
 html, body{
@@ -16,7 +11,7 @@ html, body{
 }
 
 p{
-	font-family: futrfw;
+	font-family: comfortaa;
 	color: white;
 
 	margin: 0;
