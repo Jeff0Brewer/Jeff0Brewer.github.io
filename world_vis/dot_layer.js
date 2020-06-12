@@ -21,11 +21,13 @@ class Dots{
 			this.p.push(new P_Dot(as*i, axes[i % axes.length], -1*map(Math.random(), 0, 1, Math.PI/10, Math.PI/3), pow_map(Math.random(), 0, 1, .7, .995, .5), mult(bounds, map(Math.random(), 0, 1, .5, 1)), 1));
 		}
 
-		this.pos_buffer = new Float32Array(this.p.length*(this.p[0].pos.length + 2)*this.p_fpv);
-		this.col_buffer = new Float32Array(this.p.length*(this.p[0].pos.length + 2)*this.c_fpv);
+		this.pos_buffer = new Float32Array(this.p.length*(this.p[0].pos.length + 2)*this.p_fpv*2);
+		this.col_buffer = new Float32Array(this.p.length*(this.p[0].pos.length + 2)*this.c_fpv*2);
+		this.wid_buffer = new Float32Array(this.p.length*(this.p[0].pos.length + 2)*2);
 
 		let pos_ind = 0;
 		let col_ind = 0;
+		let wid_ind = 0;
 		for(let i = 0; i < this.p.length; i++){
 			let c = Math.random() < .7 ? i % axes.length : Math.floor(Math.random()*axes.length);
 			for(let j = 0; j < this.p[i].pos.length; j++){
@@ -33,16 +35,18 @@ class Dots{
 				d += j == 0 ? 1 : 0;
 				d += j == this.p[i].pos.length - 1 ? 1 : 0;
 				for(let b = 0; b < d; b++){
-					for(let l = 0; l < this.p[i].pos[j].length; l++, pos_ind++){
-						this.pos_buffer[pos_ind] = this.p[i].pos[j][l];
-					}
 					let o = d > 1 && (j == 0 || j == this.p[i].pos.length - 1) ? 0 : 1;
 					let s = map(j, 0, this.p[i].pos.length, 0, 1);
 					let color = [s, s, s, o];
 					for(let l = 0; l < colors[c].length; l++)
 						color[colors[c][l]] = 1;
-					for(let l = 0; l < color.length; l++, col_ind++){
-						this.col_buffer[col_ind] = color[l];
+					for(let ts = 0; ts < 2; ts++){
+						for(let l = 0; l < this.p[i].pos[j].length; l++, pos_ind++)
+							this.pos_buffer[pos_ind] = this.p[i].pos[j][l];
+						for(let l = 0; l < color.length; l++, col_ind++)
+							this.col_buffer[col_ind] = color[l];
+						this.wid_buffer[wid_ind] = (ts == 0 ? 1 : -1) * map(j, 0, this.p[i].pos.length - 1, 0, .005*o);
+						wid_ind++;
 					}
 				}
 			}
@@ -67,6 +71,14 @@ class Dots{
 		this.gl_col_buf = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.gl_col_buf);
 		gl.bufferData(gl.ARRAY_BUFFER, this.col_buffer, gl.STATIC_DRAW);
+
+		this.a_Width = gl.getAttribLocation(gl.program, "a_Width");
+		gl.vertexAttribPointer(this.a_Width, 1, gl.FLOAT, false, this.fsize, 0);
+		gl.enableVertexAttribArray(this.a_Width);
+
+		this.gl_wid_buf = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.gl_wid_buf);
+		gl.bufferData(gl.ARRAY_BUFFER, this.wid_buffer, gl.STATIC_DRAW);
 	}
 
 	draw(u_ModelMatrix){
@@ -77,8 +89,11 @@ class Dots{
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.gl_col_buf);
 		gl.vertexAttribPointer(this.a_Color, this.c_fpv, gl.FLOAT, false, this.fsize * this.c_fpv, 0);
 
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.gl_wid_buf);
+		gl.vertexAttribPointer(this.a_Width, this.c_fpv, gl.FLOAT, false, this.fsize, 0);
+
 		gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
-		gl.drawArrays(gl.LINE_STRIP, 0, this.pos_buffer.length / this.p_fpv);
+		gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.pos_buffer.length / this.p_fpv);
 	}
 
 	update(elapsed, r){
@@ -90,8 +105,9 @@ class Dots{
 				d += j == 0 ? 1 : 0;
 				d += j == this.p[i].pos.length - 1 ? 1 : 0;
 				for(let b = 0; b < d; b++){
-					for(let l = 0; l < this.p[i].pos[j].length; l++, pos_ind++){
-						this.pos_buffer[pos_ind] = this.p[i].pos[j][l];
+					for(let ts = 0; ts < 2; ts++){
+						for(let l = 0; l < this.p[i].pos[j].length; l++, pos_ind++)
+							this.pos_buffer[pos_ind] = this.p[i].pos[j][l];
 					}
 				}
 			}
