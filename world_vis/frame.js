@@ -372,13 +372,15 @@ document.body.onresize = function(){
 
 
 	if(gl){
+		gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
 		switch_shader(tex_program);
 		projMatrix.setPerspective(fovy, canvas.width / canvas.height, .01, 500000);
 		gl.uniformMatrix4fv(u_ProjMatrix, false, projMatrix.elements);
-		gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+		switch_shader(dot_program);
+		gl.uniformMatrix4fv(u_ProjMatrix_d, false, projMatrix.elements);
 
 		setup_tex();
-
-		draw();
 	}
 }
