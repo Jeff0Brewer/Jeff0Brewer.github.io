@@ -85,44 +85,9 @@ var FSHADER_DOT =
 	"gl_FragColor = v_Color;\n" +
 "}";
 
-var VSHADER_CNV =
-"attribute vec2 a_Position;\n" +
-"attribute vec2 a_TexCoord;\n" +
-
-"varying vec2 v_TexCoord;\n" +
-
-"void main() {\n" +
-	"gl_Position = vec4(a_Position[0], a_Position[1], 0.0, 1.0);\n" +
-	"v_TexCoord = a_TexCoord;\n" +
-"}";
-
-var FSHADER_CNV =
-"precision highp float;\n" +
-
-"uniform sampler2D u_Sampler;\n" +
-
-"varying vec2 v_TexCoord;\n" +
-"uniform float u_Time;\n" +
-
-"float rand(vec2 n) {return fract(sin(dot(n, vec2(12.9898, 4.1414))) * 43758.5453);}\n" +
-
-"float noise(vec2 n) {\n" +
-	"const vec2 d = vec2(0.0, 1.0);\n" +
-  	"vec2 b = floor(n), f = smoothstep(vec2(0.0), vec2(1.0), fract(n));\n" +
-	"return mix(mix(rand(b), rand(b + d.yx), f.x), mix(rand(b + d.xy), rand(b + d.yy), f.x), f.y);\n" +
-"}\n" +
-
-"void main() { \n" +
-	"float n = noise(vec2(gl_FragCoord.x*.7 + u_Time*1.9, gl_FragCoord.y*.7));\n" +
-	"n = n*n;\n" +
-	"vec4 color = texture2D(u_Sampler, v_TexCoord);\n" +
-	"gl_FragColor = vec4(color.xyz*(n*.1 + 1.0), color.w);\n" +
-"}";
-
 var p_fpv = 3;
 var c_fpv = 4;
 var n_fpv = 3;
-var t_fpv = 2;
 
 var fovy = 50;
 
@@ -156,9 +121,7 @@ function main() {
 	worlds.push(new Vis(p_fpv, n_fpv, 7, [2.2*Math.cos(Math.PI*2/3), 1.75*Math.sin(Math.PI*2/3), 0], [-.3*Math.cos(Math.PI*2/3), .3*Math.sin(Math.PI*2/3), 1]));
 	worlds.push(new Vis(p_fpv, n_fpv, 6, [2.1*Math.cos(Math.PI*4/3), 1.5*Math.sin(Math.PI*4/3), 0], [-.3*Math.cos(Math.PI*2/3), -.3*Math.sin(Math.PI*2/3), 1]));
 	dots = new Dots(p_fpv, c_fpv, 1750, [-.7, .7]);
-	fill = new TexFill(p_fpv, t_fpv, 2, 2);
 	init_buffers();
-	setup_tex();
 
 	gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
@@ -192,7 +155,6 @@ function main() {
 		let elapsed = now - g_last;
 		g_last = now;
 
-
 		if(audio_initialized){
 			if(audio.currentTime >= audio.duration)
 				nextsong(false);
@@ -200,9 +162,6 @@ function main() {
 			analyser.getByteFrequencyData(fData);
 			songtime.innerHTML = Math.floor(audio.currentTime / 60).toString() + ":" + ("0" + Math.floor(audio.currentTime % 60).toString()).slice(-2);
 		}
-
-		switch_shader(cnv_program);
-		gl.uniform1f(u_Time, ((new Date().getTime() / 1000) % 60)*canvas.width % canvas.width);
 
 		if(elapsed < 500){
 			let f_adj = [];
@@ -246,7 +205,7 @@ function main() {
 main();
 
 function draw() {
-	gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+	gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 	gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
 
 	switch_shader(tex_program);
@@ -257,42 +216,6 @@ function draw() {
 
 	switch_shader(dot_program);
 	dots.draw();
-
-	gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-	gl.bindTexture(gl.TEXTURE_2D, texture);
-	gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
-
-	switch_shader(cnv_program);
-	fill.draw();
-}
-
-function setup_tex(){
-	texture = gl.createTexture();
-	gl.bindTexture(gl.TEXTURE_2D, texture);
-	let level = 0;
-	let internal_format = gl.RGBA;
-	let border = 0;
-	let format = gl.RGBA;
-	let type = gl.UNSIGNED_BYTE;
-	let data = null;
-	let targetTextureWidth = innerWidth*window.devicePixelRatio;
-	let targetTextureHeight = innerHeight*window.devicePixelRatio;
-	gl.texImage2D(gl.TEXTURE_2D, level, internal_format, targetTextureWidth, targetTextureHeight, border, format, type, data);
-	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-  	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-  	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-
-	fb = gl.createFramebuffer();
-	gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
-
-	attachment_point = gl.COLOR_ATTACHMENT0;
-	gl.framebufferTexture2D(gl.FRAMEBUFFER, attachment_point, gl.TEXTURE_2D, texture, level);
-
-	const depthBuffer = gl.createRenderbuffer();
-	gl.bindRenderbuffer(gl.RENDERBUFFER, depthBuffer);
-
-	gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, targetTextureWidth, targetTextureHeight);
-	gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, depthBuffer);
 }
 
 function setup_gl(){
@@ -330,15 +253,11 @@ function setup_gl(){
 	u_P2r = gl.getUniformLocation(gl.program, "u_P2r");
 	u_P3p = gl.getUniformLocation(gl.program, "u_P3p");
 	u_P3r = gl.getUniformLocation(gl.program, "u_P3r");
-
-	switch_shader(cnv_program);
-	u_Time = gl.getUniformLocation(gl.program, "u_Time");
 }
 
 function init_shaders(){
 	tex_program = createProgram(gl, VSHADER_TEX, FSHADER_TEX);
 	dot_program = createProgram(gl, VSHADER_DOT, FSHADER_DOT);
-	cnv_program = createProgram(gl, VSHADER_CNV, FSHADER_CNV);
 }
 
 function init_buffers(){
@@ -349,9 +268,6 @@ function init_buffers(){
 
 	switch_shader(dot_program);
 	dots.init_buffers();
-
-	switch_shader(cnv_program);
-	fill.init_buffers();
 }
 
 function switch_shader(program){
@@ -380,7 +296,5 @@ document.body.onresize = function(){
 
 		switch_shader(dot_program);
 		gl.uniformMatrix4fv(u_ProjMatrix_d, false, projMatrix.elements);
-
-		setup_tex();
 	}
 }
