@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>vis</title>
+	<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body onload="main()">
+	<canvas class="c" id="c"></canvas>
+	<div class="vignette"></div>
+	<div id="menu" class="menu">
+		<div id="song_list" class="song_list">
+			<div id="item_template" class="menu_item hidden" >
+				<div class="song_name">mix3</div>
+				<div class="play_pause">
+					<svg class="symbol" width="40" height="40">
+						<polygon points="13,13 13,27 27,20" style="fill:white;"/>
+					</svg>
+					<svg class="symbol hidden" width="40" height="40">
+						<polygon points="13,13 13,27 18,27 18,13" style="fill:white;"/>
+						<polygon points="27,13 27,27 22,27 22,13" style="fill:white;"/>
+					</svg>
+				</div>
+				<br>
+				<div id="progress_base" class="progress_base">
+					<div id="progress_bar" class="progress_bar"></div>
+				</div>
+			</div>
+		</div>
+		<div id="file_item" class="menu_item fade_in">
+			<input id="file_input" class="file_input" type="file" accept="audio/*" multiple="multiple">
+			<div class="center_h"><label class="file_button" for="file_input">+</label></div>
+		</div>
+	</div>
+
+
+	<script id="v_iso" type="glsl">
+		attribute vec4 a_Position;
+		attribute float a_Scale;
+		attribute float a_Flare;
+
+		uniform mat4 u_ModelMatrix;
+		uniform mat4 u_ViewMatrix;
+		uniform mat4 u_ProjMatrix;
+		uniform float u_Alpha;
+
+		varying vec4 v_Color;
+
+		void main(){
+			vec4 pos = vec4(a_Position.xyz*a_Scale + a_Position.xyz*a_Flare, a_Position.w);
+			gl_Position = u_ProjMatrix * u_ViewMatrix * u_ModelMatrix * pos;
+			v_Color = vec4(1.0, 1.0, 1.0, u_Alpha);
+		}
+	</script>
+	<script id="f_iso" type="glsl">
+		precision highp float;
+		varying vec4 v_Color;
+		void main(){
+			gl_FragColor = v_Color;
+		}
+	</script>
+	<script id="v_mxr" type="glsl">
+		attribute vec4 a_Position;
+		attribute float a_Offset;
+		attribute float a_Angle;
+		attribute float a_Opacity;
+
+		uniform mat4 u_ModelMatrix;
+		uniform mat4 u_ViewMatrix;
+		uniform mat4 u_ProjMatrix;
+		uniform float u_Rotation;
+		uniform float u_Warp;
+
+		varying vec4 v_Color;
+
+		void main(){
+			vec4 pos = a_Position + vec4(cos(a_Angle + u_Rotation)*a_Offset, 0.0, sin(a_Angle + u_Rotation)*a_Offset, 0.0);
+			float warp_amount = .3;
+			if(length(pos)/7.0 < u_Warp){
+				warp_amount = .9;
+			}
+			pos = vec4(pos.xyz + normalize(pos.xyz)*u_Warp*warp_amount*pow(length(pos.xyz)/10.0, .25), pos.w);
+			gl_Position = u_ProjMatrix * u_ViewMatrix * u_ModelMatrix * pos;
+			v_Color = vec4(1.0, 1.0, 1.0, a_Opacity);
+		}
+	</script>
+	<script id="f_mxr" type="glsl">
+		precision highp float;
+		varying vec4 v_Color;
+		void main(){
+			gl_FragColor = v_Color;
+		}
+	</script>
+	<script id="v_tex" type="glsl">
+		attribute vec2 a_Position;
+		attribute vec2 a_TexCoord;
+
+		varying vec2 v_TexCoord;
+
+		void main(){
+			gl_Position = vec4(a_Position.xy, 0.0, 1.0);
+			v_TexCoord = a_TexCoord;
+		}
+	</script>
+	<script id="f_tex" type="glsl">
+		precision highp float;
+
+		uniform sampler2D u_Sampler;
+		uniform float u_Spray;
+
+		varying vec2 v_TexCoord;
+
+		void main(){
+			float max_spray = .25;
+			vec2 dir = v_TexCoord.xy - 0.5;
+			if(length(dir) > max_spray){
+				dir = normalize(dir)*max_spray;
+			}
+			gl_FragColor = vec4(texture2D(u_Sampler, v_TexCoord).x, texture2D(u_Sampler, v_TexCoord.xy + u_Spray*dir.xy).y, texture2D(u_Sampler, v_TexCoord.xy - u_Spray*dir.xy).z, 1.0);
+		}
+	</script>
+	<script src="noise.js"></script>
+	<script src="gl.js"></script>
+	<script src="num.js"></script>
+	<script src="vec.js"></script>
+	<script src="mat.js"></script>
+	<script src="audio_analysis.js"></script>
+	<script src="menu.js"></script>
+	<script src="isosphere.js"></script>
+	<script src="tex_fill.js"></script>
+	<script src="iso_vis.js"></script>
+	<script src="rain_vis.js"></script>
+	<script src="main.js"></script>
+</body>

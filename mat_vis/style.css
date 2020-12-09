@@ -1,0 +1,153 @@
+html, body{
+	position: relative;
+	overflow: hidden;;
+	width: 100%;
+	height: 100%;
+	background: #000000;
+}
+
+.c{
+	position: absolute;
+	left: 0;
+	top: 0;
+	margin: 0;
+	padding: 0;
+	width: 100vw;
+	height: 100vh;
+	pointer-events: none;
+}
+
+.vignette{
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background: radial-gradient(circle, transparent 70%, black 120%);
+	z-index: 1;
+}
+
+.menu{
+	position: absolute;
+	left: 0;
+	top: 5px;
+	width: 325px;
+	overflow-x: hidden;
+	user-select: none;
+	z-index: 2;
+}
+
+.song_list{
+	position: relative;
+	float: left;
+	width: 325px;
+	max-height: 70vh;
+	overflow-y: scroll;
+	overflow-x: hidden;
+	padding-right: 20px;
+	box-sizing: content-box;
+}
+
+.menu_item{
+	position: relative;
+	width: 100%;
+	height: 40px;
+
+	color: white;
+	font-family: roboto;
+	font-size: 15px;
+	line-height: 40px;
+	padding-left: 10px;
+	opacity: .4;
+
+	overflow: hidden;
+}
+
+.fade_out{
+	animation-name: fade_item;
+	animation-fill-mode: forwards;
+	animation-duration: 1s;
+}
+
+.fade_in{
+	animation-name: fade_item;
+	animation-direction: reverse;
+	animation-fill-mode: forwards;
+	animation-duration: .3s;
+}
+
+.selected{
+	opacity: 1;
+	height: 50px;
+}
+
+.song_name{
+	width: calc(100% - 40px);
+	height: 100%;
+	float: left;
+	overflow: hidden;
+}
+
+.play_pause{
+	position: relative;
+	float: right;
+	cursor: pointer;
+}
+
+.progress_base{
+	position: relative;
+	border-style: solid;
+	border-width: 0 1px 0 1px;
+	width: calc(100% - 12px);
+	height: 3px;
+	cursor: grab;
+}
+
+.progress_bar{
+	height: 100%;
+	width: 0%;
+	max-width: 100%;
+	background: white;
+	pointer-events: none;
+}
+
+.center_h{
+	text-align: center;
+}
+
+.file_button{
+	display: inline-block;
+	width: 40px;
+	height: 40px;
+	font-size: 25px;
+	cursor: pointer;
+}
+
+.file_input{
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+}
+
+.hidden{
+	visibility: hidden;
+	position: absolute;
+	width: 0;
+	height: 0;
+}
+
+@keyframes fade_item{
+	from{
+		opacity: .4;
+	}
+	to{
+		opacity: 0;
+	}
+}
+
+@font-face{
+	font-family: roboto;
+	src: url('Roboto-Light.ttf');
+}
