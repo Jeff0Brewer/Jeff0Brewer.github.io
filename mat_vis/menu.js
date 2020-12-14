@@ -41,8 +41,8 @@ var Menu = function(){
 			menu.scroll_max = menu.s_l.scrollHeight - menu.list_height;
 			menu.scroll_state = 0;
 			menu.selected_y = 0;
-			menu.update_scroll();
 			menu.uncollapse();
+			menu.update_scroll();
 		}
 	}
 
@@ -219,7 +219,7 @@ Menu.prototype.collapse = function(){
 	this.f_b.classList.remove('in');
 	this.f_b.classList.add('out');
 	this.m.appendChild(this.f_b);
-	
+
 	this.s_b.remove();
 	this.s_b.classList.remove('in');
 	this.s_b.classList.add('out');
@@ -268,7 +268,7 @@ Menu.prototype.update_scroll = function(){
 Menu.prototype.resize = function(){
 	if(this.collapsed)
 		this.uncollapse();
-	this.scroll_max = this.s_l.scrollHeight - this.s_l.getBoundingClientRect().height;
+	this.list_height = this.s_l.getBoundingClientRect().height;
+	this.scroll_max = this.s_l.scrollHeight - this.list_height;
+	this.update_scroll();
 }
-
-
