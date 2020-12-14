@@ -22,6 +22,7 @@ var Menu = function(){
 		max: 2000
 	};
 	this.f_b = document.getElementById('file_button');
+	this.s_b = document.getElementById('scroll_bar');
 
 	let menu = this;
 	document.getElementById('file_input').onchange = function(){
@@ -36,18 +37,23 @@ var Menu = function(){
 				menu.add_item(files[ind].name.substring(0, files[ind].name.lastIndexOf('.')), URL.createObjectURL(files[ind]));
 			}
 			menu.select_item(0);
-			menu.scroll_max = menu.s_l.scrollHeight - menu.s_l.getBoundingClientRect().height;
+			menu.list_height = menu.s_l.getBoundingClientRect().height;
+			menu.scroll_max = menu.s_l.scrollHeight - menu.list_height;
 			menu.scroll_state = 0;
 			menu.selected_y = 0;
-			menu.collapsed = false;
+			menu.update_scroll();
 			menu.uncollapse();
 		}
 	}
 
 	this.s_l = document.getElementById('song_list');
+	this.list_height = this.s_l.getBoundingClientRect().height;
 	this.s_l.onmouseenter = function(){menu.mouse_over = true; if(menu.collapsed){menu.uncollapse();}}
 	this.s_l.onmouseleave = function(){menu.mouse_over = false;}
-	this.s_l.onscroll = function(){menu.scroll_state = this.scrollTop;};
+	this.s_l.onscroll = function(){
+		menu.scroll_state = this.scrollTop;
+		menu.update_scroll();
+	};
 }
 
 //select an item in the list
@@ -64,8 +70,8 @@ Menu.prototype.select_item = function(i){
 		this.selected_ind = i;
 		this.items[i][2].classList.add('selected');
 		this.items[i][2].childNodes[3].classList.remove('hidden');
-		this.items[i][2].classList.remove('fade_in');
-		this.items[i][2].classList.remove('fade_out');
+		this.items[i][2].classList.remove('in');
+		this.items[i][2].classList.remove('out');
 		if(this.fft != null && this.fft.change_file(this.items[i][1])){
 			this.items[i][2].childNodes[3].childNodes[1].classList.add('hidden');
 			this.items[i][2].childNodes[3].childNodes[3].classList.remove('hidden');
@@ -201,8 +207,8 @@ Menu.prototype.collapse = function(){
 	for(let i = 0; i < this.items.length; i++){
 		if(i != this.selected_ind){
 			this.items[i][2].remove();
-			this.items[i][2].classList.remove('fade_in');
-			this.items[i][2].classList.add('fade_out');
+			this.items[i][2].classList.remove('in');
+			this.items[i][2].classList.add('out');
 			if(i != this.items.length - 1)
 				this.s_l.insertBefore(this.items[i][2], this.items[i + 1][2]);
 		}
@@ -210,9 +216,14 @@ Menu.prototype.collapse = function(){
 	this.s_l.appendChild(this.items[this.items.length - 1][2]);
 
 	this.f_b.remove();
-	this.f_b.classList.remove('fb_in');
-	this.f_b.classList.add('fb_out');
+	this.f_b.classList.remove('in');
+	this.f_b.classList.add('out');
 	this.m.appendChild(this.f_b);
+	
+	this.s_b.remove();
+	this.s_b.classList.remove('in');
+	this.s_b.classList.add('out');
+	this.m.prepend(this.s_b);
 }
 
 //uncollapse the menu
@@ -222,8 +233,8 @@ Menu.prototype.uncollapse = function(){
 	for(let i = 0; i < this.items.length; i++){
 		if(i != this.selected_ind){
 			this.items[i][2].remove();
-			this.items[i][2].classList.remove('fade_out');
-			this.items[i][2].classList.add('fade_in');
+			this.items[i][2].classList.remove('out');
+			this.items[i][2].classList.add('in');
 			if(i != this.items.length - 1)
 				this.s_l.insertBefore(this.items[i][2], this.items[i + 1][2]);
 		}
@@ -231,9 +242,26 @@ Menu.prototype.uncollapse = function(){
 	this.s_l.appendChild(this.items[this.items.length - 1][2]);
 	
 	this.f_b.remove();
-	this.f_b.classList.remove('fb_out');
-	this.f_b.classList.add('fb_in');
+	this.f_b.classList.remove('out');
+	this.f_b.classList.add('in');
 	this.m.appendChild(this.f_b);
+
+	this.s_b.remove();
+	this.s_b.classList.remove('out');
+	this.s_b.classList.add('in');
+	this.m.prepend(this.s_b);
+}
+
+//update the visual scrollbar after setting scroll_state
+Menu.prototype.update_scroll = function(){
+	if(this.scroll_max > 0){
+		let f = this.list_height/(this.scroll_max+this.list_height);
+		this.s_b.style.top = ((1 - f)*this.scroll_state/this.scroll_max*this.list_height).toString() + 'px';
+		this.s_b.style.height = (f*this.list_height).toString() + 'px';
+	}
+	else{
+		this.s_b.style.height = '0';
+	}
 }
 
 //handle page resizes

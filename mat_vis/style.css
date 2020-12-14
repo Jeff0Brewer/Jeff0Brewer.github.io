@@ -36,6 +36,18 @@ html, body{
 	z-index: 2;
 }
 
+.scroll_bar{
+	position: absolute;
+	left: 335px;
+	width: 1px;
+	height: 0;
+	background-color: white;
+}
+
+.sb{
+	animation-name: fade_sb;
+}
+
 .song_list{
 	position: relative;
 	float: left;
@@ -61,17 +73,8 @@ html, body{
 
 }
 
-.fade_out{
-	animation-name: fade_item;
-	animation-fill-mode: forwards;
-	animation-duration: 1s;
-}
-
-.fade_in{
-	animation-name: fade_item;
-	animation-direction: reverse;
-	animation-fill-mode: forwards;
-	animation-duration: .3s;
+.mi{
+	animation-name: fade_mi;
 }
 
 .selected{
@@ -114,7 +117,6 @@ html, body{
 	width: 325px;
 	overflow-x: hidden;
 	height: auto;
-	padding-right: 5px;
 }
 
 .file_button{
@@ -133,18 +135,8 @@ html, body{
 	border-width: 1px 0 0 0;
 }
 
-.fb_out{
+.fb{
 	animation-name: fade_fb;
-	animation-fill-mode: forwards;
-	animation-duration: 1s;
-
-}
-
-.fb_in{
-	animation-name: fade_fb;
-	animation-direction: reverse;
-	animation-fill-mode: forwards;
-	animation-duration: .3s;
 }
 
 .file_input{
@@ -162,6 +154,26 @@ html, body{
 	height: 0;
 }
 
+.out{
+	animation-fill-mode: forwards;
+	animation-duration: 1s;
+}
+
+.in{
+	animation-direction: reverse;
+	animation-fill-mode: forwards;
+	animation-duration: .3s;
+}
+
+@keyframes fade_sb{
+	from{
+		opacity: 1;
+	}
+	to{
+		opacity: 0;
+	}
+}
+
 @keyframes fade_fb{
 	from{
 		line-height: 30px;
@@ -173,16 +185,7 @@ html, body{
 	}
 }
 
-@keyframes fade_lw{
-	from{
-		border-color: rgba(1,1,1,1);
-	}
-	to{
-		border-color: rgba(1,1,1,0);
-	}
-}
-
-@keyframes fade_item{
+@keyframes fade_mi{
 	from{
 		opacity: .4;
 	}
