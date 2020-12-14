@@ -41,7 +41,7 @@ html, body{
 	left: 335px;
 	width: 1px;
 	height: 0;
-	padding-top: 5px;
+	margin-top: 5px;
 	background-color: white;
 }
 
@@ -67,7 +67,7 @@ html, body{
 	overflow: hidden;
 	color: white;
 	font-family: roboto;
-	font-size: 16px;
+	font-size: 14px;
 	line-height: 40px;
 	padding-left: 10px;
 	opacity: .4;
@@ -123,8 +123,8 @@ html, body{
 	display: inline-block;
 	position: relative;
 	text-align: left;
-	height: 30px;
-	line-height: 30px;
+	height: 40px;
+	line-height: 40px;
 	font-family: roboto-thin;
 	font-size: 15px;
 	opacity: 1;
@@ -176,7 +176,7 @@ html, body{
 
 @keyframes fade_fb{
 	from{
-		line-height: 30px;
+		line-height: 40px;
 		opacity: 1;
 	}
 	to{

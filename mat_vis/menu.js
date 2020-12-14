@@ -1,28 +1,35 @@
 //object for controlling menu
 var Menu = function(){
 	this.m = document.getElementById('menu');
-	this.fft = null;
-	this.items = [];
-	this.inds = [];
-	this.selected_ind = -1;
 	this.i_t = document.getElementById('item_template').cloneNode(true);
 	this.i_t.classList.remove('hidden');
 	this.i_t.childNodes[1].innerHTML = '';
 	this.i_t.childNodes[3].classList.add('hidden');
 	this.i_t.id = '';
-	this.dragging = false;
+	this.fft = null;
+	this.items = [];
+	this.selected_ind = -1;
+	this.shift_ind = -1;
+	this.shifting = false;
+	this.scrubbing = false;
 	this.collapsed = false;
 	this.mouse_over = true;
+	this.menu_top = 0;
 	this.selected_y = 0;
 	this.scroll_state = 0;
 	this.scroll_max = -1;
-	this.menu_top = 0;
-	this.collapse_time = {
-		count: 0,
-		max: 2000
-	};
+	this.collapse_count = 0;
+	this.collapse_max = 2000;
+	this.mouse = [-1, -1];
+
 	this.f_b = document.getElementById('file_button');
 	this.s_b = document.getElementById('scroll_bar');
+	this.s_l = document.getElementById('song_list');
+	this.list_height = this.s_l.getBoundingClientRect().height;
+	this.s_l.onscroll = function(){
+		menu.scroll_state = this.scrollTop;
+		menu.update_scroll();
+	};
 
 	let menu = this;
 	document.getElementById('file_input').onchange = function(){
@@ -47,14 +54,64 @@ var Menu = function(){
 	}
 
 	this.m.onmouseenter = function(){menu.mouse_over = true; if(menu.collapsed){menu.uncollapse();}}
-	this.m.onmouseleave = function(){menu.mouse_over = false;}
+	this.m.onmouseleave = function(){menu.mouse_over = false; menu.shifting = false;}
+	this.m.onmouseup = function(){ menu.shifting = false; }
+	this.m.onmouseover = function(e){
+		menu.mouse = [e.clientX, e.clientY];
+	}
+}
 
-	this.s_l = document.getElementById('song_list');
-	this.list_height = this.s_l.getBoundingClientRect().height;
-	this.s_l.onscroll = function(){
-		menu.scroll_state = this.scrollTop;
-		menu.update_scroll();
-	};
+//update the menu
+Menu.prototype.update = function(elapsed){
+	//update progress bar
+	let per = this.fft == null ? 0 : this.fft.get_progress();
+	this.items[this.selected_ind][2].childNodes[7].childNodes[1].style.width = per.toFixed(2) + '%';
+	if(per >= 100){
+		this.advance();
+	}
+
+	//collapse after set time without mouse
+	this.collapse_count += !this.collapsed && !this.mouse_over ? elapsed : 0;
+	if(this.collapse_count > this.collapse_max){
+		this.collapse_count = 0;
+		this.collapse();
+	}
+
+	//animate collapse and uncollapse
+	if(this.collapsed){
+		this.scroll_state = this.scroll_state*.9 + this.selected_y*.1;
+		this.s_l.scrollTop = this.scroll_state;
+		this.menu_top = this.scroll_max - this.scroll_state;
+		if(this.menu_top > 0) 
+			this.menu_top = 0;
+		this.m.style.top = this.menu_top.toString() + 'px';
+	}
+	else{
+		this.scroll_state = this.scroll_state > this.scroll_max ? this.scroll_max : this.scroll_state;
+		this.menu_top = this.menu_top*.9;
+		this.m.style.top = this.menu_top.toString() + 'px';
+	}
+
+	//shift playlist order
+	if(this.shifting && this.mouse_over && this.items.length > 1){
+		let insert_ind = Math.floor(this.items.length*(this.mouse[1] - this.s_l.getBoundingClientRect().top + this.scroll_state) / (this.list_height + this.scroll_max));
+		if(insert_ind != this.shift_ind){
+			let item = this.items.splice(this.shift_ind, 1)[0];
+			if(item){
+				item[2].remove();
+				this.items.splice(insert_ind, 0, item);
+				item[2].classList.remove('in');
+				if(insert_ind - 1 < 0)
+					this.s_l.prepend(item[2]);
+				else if(insert_ind + 1 >= this.items.length)
+					this.s_l.append(item[2]);
+				else
+					this.s_l.insertBefore(item[2], this.items[insert_ind + 1][2]);
+				this.shift_ind = insert_ind;
+				this.set_ids();
+			}
+		}
+	}
 }
 
 //select an item in the list
@@ -84,7 +141,6 @@ Menu.prototype.select_item = function(i){
 Menu.prototype.add_item = function(name, file){
 	let menu = this;
 	let item = this.i_t.cloneNode(true);
-	item.childNodes[1].innerHTML = name;
 	item.classList.add('fade_in');
 	item.onmouseenter = function(){
 		this.childNodes[3].classList.remove('hidden');
@@ -94,6 +150,16 @@ Menu.prototype.add_item = function(name, file){
 		if(menu.selected_ind != parseFloat(this.id))
 			this.childNodes[3].classList.add('hidden');
 	}
+
+	//name textbox
+	item.childNodes[1].innerHTML = name;
+	item.childNodes[1].id = item.id;
+	item.childNodes[1].onmousedown = function(){
+		menu.shift_order(parseFloat(this.id));
+	}
+
+
+	//play pause button
 	item.childNodes[3].id = item.id;
 	item.childNodes[3].onmousedown = function(){
 		if(this.childNodes[1].classList.contains('hidden')){
@@ -113,8 +179,9 @@ Menu.prototype.add_item = function(name, file){
 		}
 	}
 
+	//progress bar
 	item.childNodes[7].onmousedown = function(e){
-		menu.dragging = true;
+		menu.scrubbing = true;
 		this.style.cursor = 'grabbing';
 		if(menu.fft != null){
 			let rect = this.getBoundingClientRect();
@@ -124,15 +191,15 @@ Menu.prototype.add_item = function(name, file){
 		}
 	}
 	item.childNodes[7].onmouseup = function(){
-		menu.dragging = false;
+		menu.scrubbing = false;
 		this.style.cursor = 'grab';
 	}
 	item.childNodes[7].onmouseleave = function(){
-		menu.dragging = false;
+		menu.scrubbing = false;
 		this.style.cursor = 'grab';
 	}
 	item.childNodes[7].onmousemove = function(e){
-		if(menu.dragging && menu.fft != null){
+		if(menu.scrubbing && menu.fft != null){
 			let rect = this.getBoundingClientRect();
 			let per = 100*(e.clientX - rect.left)/rect.width;
 			menu.fft.set_progress(per);
@@ -153,41 +220,20 @@ Menu.prototype.clear_items = function(){
 	}
 }
 
+//set html ids to index in list
+Menu.prototype.set_ids = function(){
+	for(let i = 0; i < this.items.length; i++){
+		if(this.items[i][2].classList.contains('selected'))
+			this.selected_ind = i;
+		this.items[i][2].id = i.toString();
+		this.items[i][2].childNodes[1].id = i.toString();
+		this.items[i][2].childNodes[3].id = i.toString();
+	}
+}
+
 //add reference to fft object
 Menu.prototype.attach_fft = function(fft){
 	this.fft = fft;
-}
-
-//update the menu
-Menu.prototype.update = function(elapsed){
-	//update progress bar
-	let per = this.fft == null ? 0 : this.fft.get_progress();
-	this.items[this.selected_ind][2].childNodes[7].childNodes[1].style.width = per.toFixed(2) + '%';
-	if(per >= 100){
-		this.advance();
-	}
-
-	//collapse after set time without mouse
-	this.collapse_time.count += !this.collapsed && !this.mouse_over ? elapsed : 0;
-	if(this.collapse_time.count > this.collapse_time.max){
-		this.collapse_time.count = 0;
-		this.collapse();
-	}
-
-	//animate collapse and uncollapse
-	if(this.collapsed){
-		this.scroll_state = this.scroll_state*.9 + this.selected_y*.1;
-		this.s_l.scrollTop = this.scroll_state;
-		this.menu_top = this.scroll_max - this.scroll_state;
-		if(this.menu_top > 0) 
-			this.menu_top = 0;
-		this.m.style.top = this.menu_top.toString() + 'px';
-	}
-	else{
-		this.scroll_state = this.scroll_state > this.scroll_max ? this.scroll_max : this.scroll_state;
-		this.menu_top = this.menu_top*.9;
-		this.m.style.top = this.menu_top.toString() + 'px';
-	}
 }
 
 //advance to the next song
@@ -196,8 +242,8 @@ Menu.prototype.advance = function(){
 		if(this.collapsed){
 			this.uncollapse();
 		}
-		menu.select_item(menu.selected_ind + 1); 
-		menu.fft.play_audio();
+		this.select_item(this.selected_ind + 1); 
+		this.fft.play_audio();
 	}
 }
 
@@ -229,7 +275,7 @@ Menu.prototype.collapse = function(){
 
 //uncollapse the menu
 Menu.prototype.uncollapse = function(){
-	this.collapse_time.count = 0;
+	this.collapse_count = 0;
 	this.collapsed = false;
 	for(let i = 0; i < this.items.length; i++){
 		if(i != this.selected_ind){
@@ -253,10 +299,18 @@ Menu.prototype.uncollapse = function(){
 	this.m.prepend(this.s_b);
 }
 
+//begin playlist reorder interaction
+Menu.prototype.shift_order = function(i){
+	if(i < this.items.length && this.items.length > 1){
+		this.shift_ind = i;
+		this.shifting = true;
+	}
+}
+
 //update the visual scrollbar after setting scroll_state
 Menu.prototype.update_scroll = function(){
 	if(this.scroll_max > 0){
-		let f = this.list_height/(this.scroll_max+this.list_height);
+		let f = min_sclr(this.list_height/(this.scroll_max+this.list_height), .7);
 		this.s_b.style.top = ((1 - f)*this.scroll_state/this.scroll_max*this.list_height).toString() + 'px';
 		this.s_b.style.height = (f*this.list_height).toString() + 'px';
 	}
