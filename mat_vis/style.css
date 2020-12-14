@@ -154,6 +154,10 @@ html, body{
 	height: 0;
 }
 
+.hover{
+	color: #DFDFDF;
+}
+
 .out{
 	animation-fill-mode: forwards;
 	animation-duration: 1s;

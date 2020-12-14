@@ -23,6 +23,8 @@ var Menu = function(){
 	this.mouse = [-1, -1];
 
 	this.f_b = document.getElementById('file_button');
+	this.f_b.onmouseenter = function(){ this.classList.add('hover'); }
+	this.f_b.onmouseleave = function(){ this.classList.remove('hover'); }
 	this.s_b = document.getElementById('scroll_bar');
 	this.s_l = document.getElementById('song_list');
 	this.list_height = this.s_l.getBoundingClientRect().height;
