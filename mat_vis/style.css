@@ -23,7 +23,7 @@ html, body{
 	left: 0;
 	width: 100vw;
 	height: 100vh;
-	background: radial-gradient(circle, transparent 70%, black 120%);
+	background: radial-gradient(circle, transparent 70%, black 100%);
 	z-index: 1;
 }
 
@@ -32,7 +32,6 @@ html, body{
 	left: 0;
 	top: 5px;
 	width: 325px;
-	overflow-x: hidden;
 	user-select: none;
 	z-index: 2;
 }
@@ -111,16 +110,41 @@ html, body{
 	pointer-events: none;
 }
 
-.center_h{
-	text-align: center;
+.list_wrapper{
+	display: inline-block;
+	width: 325px;
+	overflow-x: hidden;
+	height: auto;
+	padding-right: 5px;
 }
 
 .file_button{
 	display: inline-block;
-	width: 40px;
-	height: 40px;
-	font-size: 25px;
+	position: relative;
+	text-align: left;
+	height: 30px;
+	line-height: 30px;
+	font-size: 15px;
+	opacity: 1;
 	cursor: pointer;
+
+	border-style: solid;
+	border-color: white;
+	border-width: 1px 0 0 0;
+}
+
+.fb_out{
+	animation-name: fade_fb;
+	animation-fill-mode: forwards;
+	animation-duration: 1s;
+
+}
+
+.fb_in{
+	animation-name: fade_fb;
+	animation-direction: reverse;
+	animation-fill-mode: forwards;
+	animation-duration: .3s;
 }
 
 .file_input{
@@ -136,6 +160,26 @@ html, body{
 	position: absolute;
 	width: 0;
 	height: 0;
+}
+
+@keyframes fade_fb{
+	from{
+		line-height: 30px;
+		opacity: 1;
+	}
+	to{
+		line-height: 0px;
+		opacity: 0;
+	}
+}
+
+@keyframes fade_lw{
+	from{
+		border-color: rgba(1,1,1,1);
+	}
+	to{
+		border-color: rgba(1,1,1,0);
+	}
 }
 
 @keyframes fade_item{

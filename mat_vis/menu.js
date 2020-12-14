@@ -21,7 +21,7 @@ var Menu = function(){
 		count: 0,
 		max: 2000
 	};
-	this.f_i = document.getElementById('file_item');
+	this.f_b = document.getElementById('file_button');
 
 	let menu = this;
 	document.getElementById('file_input').onchange = function(){
@@ -40,6 +40,7 @@ var Menu = function(){
 			menu.scroll_state = 0;
 			menu.selected_y = 0;
 			menu.collapsed = false;
+			menu.uncollapse();
 		}
 	}
 
@@ -207,10 +208,11 @@ Menu.prototype.collapse = function(){
 		}
 	}
 	this.s_l.appendChild(this.items[this.items.length - 1][2]);
-	this.f_i.remove();
-	this.f_i.classList.remove('fade_in');
-	this.f_i.classList.add('fade_out');
-	this.m.appendChild(this.f_i);
+
+	this.f_b.remove();
+	this.f_b.classList.remove('fb_in');
+	this.f_b.classList.add('fb_out');
+	this.m.appendChild(this.f_b);
 }
 
 //uncollapse the menu
@@ -227,10 +229,11 @@ Menu.prototype.uncollapse = function(){
 		}
 	}
 	this.s_l.appendChild(this.items[this.items.length - 1][2]);
-	this.f_i.remove();
-	this.f_i.classList.remove('fade_out');
-	this.f_i.classList.add('fade_in');
-	this.m.appendChild(this.f_i);
+	
+	this.f_b.remove();
+	this.f_b.classList.remove('fb_out');
+	this.f_b.classList.add('fb_in');
+	this.m.appendChild(this.f_b);
 }
 
 //handle page resizes

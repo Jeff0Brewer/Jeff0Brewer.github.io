@@ -8,28 +8,28 @@
 	<canvas class="c" id="c"></canvas>
 	<div class="vignette"></div>
 	<div id="menu" class="menu">
-		<div id="song_list" class="song_list">
-			<div id="item_template" class="menu_item hidden" >
-				<div class="song_name">mix3</div>
-				<div class="play_pause">
-					<svg class="symbol" width="40" height="40">
-						<polygon points="13,13 13,27 27,20" style="fill:white;"/>
-					</svg>
-					<svg class="symbol hidden" width="40" height="40">
-						<polygon points="13,13 13,27 18,27 18,13" style="fill:white;"/>
-						<polygon points="27,13 27,27 22,27 22,13" style="fill:white;"/>
-					</svg>
-				</div>
-				<br>
-				<div id="progress_base" class="progress_base">
-					<div id="progress_bar" class="progress_bar"></div>
+		<div class="list_wrapper">
+			<div id="song_list" class="song_list">
+				<div id="item_template" class="menu_item hidden" >
+					<div class="song_name">mix3</div>
+					<div class="play_pause">
+						<svg class="symbol" width="40" height="40">
+							<polygon points="13,13 13,27 27,20" style="fill:white;"/>
+						</svg>
+						<svg class="symbol hidden" width="40" height="40">
+							<polygon points="13,13 13,27 18,27 18,13" style="fill:white;"/>
+							<polygon points="27,13 27,27 22,27 22,13" style="fill:white;"/>
+						</svg>
+					</div>
+					<br>
+					<div id="progress_base" class="progress_base">
+						<div id="progress_bar" class="progress_bar"></div>
+					</div>
 				</div>
 			</div>
 		</div>
-		<div id="file_item" class="menu_item fade_in">
-			<input id="file_input" class="file_input" type="file" accept="audio/*" multiple="multiple">
-			<div class="center_h"><label class="file_button" for="file_input">+</label></div>
-		</div>
+		<input id="file_input" class="file_input" type="file" accept="audio/*" multiple="multiple">
+		<label id="file_button" class="menu_item file_button" for="file_input">+ new playlist</label>
 	</div>
 
 
