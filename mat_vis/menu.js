@@ -46,10 +46,11 @@ var Menu = function(){
 		}
 	}
 
+	this.m.onmouseenter = function(){menu.mouse_over = true; if(menu.collapsed){menu.uncollapse();}}
+	this.m.onmouseleave = function(){menu.mouse_over = false;}
+
 	this.s_l = document.getElementById('song_list');
 	this.list_height = this.s_l.getBoundingClientRect().height;
-	this.s_l.onmouseenter = function(){menu.mouse_over = true; if(menu.collapsed){menu.uncollapse();}}
-	this.s_l.onmouseleave = function(){menu.mouse_over = false;}
 	this.s_l.onscroll = function(){
 		menu.scroll_state = this.scrollTop;
 		menu.update_scroll();
