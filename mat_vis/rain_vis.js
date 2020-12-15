@@ -48,9 +48,10 @@ class Matrix_Rain{
 			let r = map(noise.simplex2(noise_pos*.1, 0), [-1, 1], r_b);
 			let a = map(noise.simplex2(noise_pos*.4, 0), [-1, 1], a_b);
 			let pos = [Math.cos(a)*r, 0, Math.sin(a)*r];
+			let a_off = map(Math.random(), [0, 1], [0, Math.PI*2]);
 			for(let l = 0; l < len; l++){
 				let center_pos = add(pos, [0, map(l, [0, len], h_b), 0]);
-				let angle = map(l, [0, len], [0, Math.PI*10]);
+				let angle = map(l, [0, len], [a_off, a_off + Math.PI*10]);
 				for(let p = 0; p < 2; p++){
 					let symbol = 0;
 					this.curr_sym.push(symbol);
