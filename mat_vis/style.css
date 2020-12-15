@@ -58,6 +58,7 @@ html, body{
 	overflow-y: scroll;
 	overflow-x: hidden;
 	box-sizing: content-box;
+	background-color: #000000;
 }
 
 .menu_item{

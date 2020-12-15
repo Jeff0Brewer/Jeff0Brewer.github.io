@@ -58,7 +58,7 @@ var Menu = function(){
 	this.m.onmouseenter = function(){menu.mouse_over = true; if(menu.collapsed){menu.uncollapse();}}
 	this.m.onmouseleave = function(){menu.mouse_over = false; menu.shifting = false;}
 	this.m.onmouseup = function(){ menu.shifting = false; }
-	this.m.onmouseover = function(e){
+	window.onmousemove = function(e){
 		menu.mouse = [e.clientX, e.clientY];
 	}
 }
@@ -96,7 +96,7 @@ Menu.prototype.update = function(elapsed){
 
 	//shift playlist order
 	if(this.shifting && this.mouse_over && this.items.length > 1){
-		let insert_ind = Math.floor(this.items.length*(this.mouse[1] - this.s_l.getBoundingClientRect().top + this.scroll_state) / (this.list_height + this.scroll_max));
+		let insert_ind = Math.floor(this.items.length*(this.mouse[1] - this.s_l.getBoundingClientRect().top + this.scroll_state) / (this.list_height + this.scroll_max) - .25);
 		if(insert_ind != this.shift_ind){
 			let item = this.items.splice(this.shift_ind, 1)[0];
 			if(item){
