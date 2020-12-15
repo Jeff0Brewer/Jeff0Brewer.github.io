@@ -9,7 +9,7 @@ class Matrix_Rain{
 		this.rot_time = 0;
 		this.switch_time = 0;
 
-		let s = .03;
+		let s = .04;
 		this.symbols = [[-.5*s,s,0, .5*s,s,0,
 						 -.5*s,s,0, 0,-s,0,
 						 .5*s,s,0, 0,-s,0],
@@ -35,9 +35,9 @@ class Matrix_Rain{
 
 		this.strands = [];
 		this.curr_sym = [];
-		this.st_b = [40, 120];
+		this.st_b = [30, 80];
 
-		let r_b = [1.75, 7]; 
+		let r_b = [1.75, 8]; 
 		let a_b = [Math.PI*.6, Math.PI*2.4];
 		let h_b = [7, -7];
 		let pos_ind = 0;
@@ -61,7 +61,7 @@ class Matrix_Rain{
 						this.pos_buffer[pos_ind + 1] = vertex_pos[1];
 						this.pos_buffer[pos_ind + 2] = vertex_pos[2];
 
-						this.off_buffer[buf_ind] = p == 0 ? -.03 : .03;
+						this.off_buffer[buf_ind] = p == 0 ? -.04 : .04;
 						this.opc_buffer[buf_ind] = 0;
 						this.ang_buffer[buf_ind] = angle;
 					}

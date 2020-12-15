@@ -75,7 +75,7 @@
 		void main(){
 			vec4 pos = a_Position + vec4(cos(a_Angle + u_Rotation)*a_Offset, 0.0, sin(a_Angle + u_Rotation)*a_Offset, 0.0);
 			float warp_amount = .3;
-			if(length(pos)/7.0 < u_Warp){
+			if(length(pos)/8.0 < u_Warp){
 				warp_amount = .9;
 			}
 			pos = vec4(pos.xyz + normalize(pos.xyz)*u_Warp*warp_amount*pow(length(pos.xyz)/10.0, .25), pos.w);
