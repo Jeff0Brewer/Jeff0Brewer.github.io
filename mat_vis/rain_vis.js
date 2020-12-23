@@ -123,7 +123,7 @@ class Matrix_Rain{
 	}
 
 	update(elapsed, fft){
-		this.warp = this.warp*.85 + exp_map(fft.sub_pro(0, .1), [0, 255], [0, 1], 2)*.15;
+		this.warp = this.warp*.85 + exp_map(fft.sub_pro(0, .1), [0, 255], [0, 1], 3)*.15;
 
 		let rot_spd = 5000;
 		this.rot_time = (this.rot_time + elapsed) % rot_spd;
