@@ -327,5 +327,6 @@ Menu.prototype.resize = function(){
 		this.uncollapse();
 	this.list_height = this.s_l.getBoundingClientRect().height;
 	this.scroll_max = this.s_l.scrollHeight - this.list_height;
+	this.scroll_state = min_sclr(this.scroll_state, this.scroll_max);
 	this.update_scroll();
 }

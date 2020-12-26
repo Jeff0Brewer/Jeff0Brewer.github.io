@@ -41,9 +41,9 @@ function setup_gl(){
 	gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 	gl.clearColor(0, 0, 0, 0);
 
-	programs.push(create_program(document.getElementById('v_iso').text, document.getElementById('f_iso').text));
+	programs.push(create_program(document.getElementById('v_iso').text, document.getElementById('f_solid').text));
+	programs.push(create_program(document.getElementById('v_mxr').text, document.getElementById('f_solid').text));
 	programs.push(create_program(document.getElementById('v_tex').text, document.getElementById('f_tex').text));
-	programs.push(create_program(document.getElementById('v_mxr').text, document.getElementById('f_mxr').text));
 }
 
 //make a texture framebuffer and add to framebuffer list, return index of fb in list

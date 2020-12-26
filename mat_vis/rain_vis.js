@@ -1,6 +1,6 @@
 //matrix rain visualization
 class Matrix_Rain{
-	constructor(p_fpv, num, len){
+	constructor(p_fpv, num, len, shader_ind){
 		this.p_fpv = p_fpv;
 		this.num = num + (num % 2);
 		this.len = len;
@@ -8,6 +8,7 @@ class Matrix_Rain{
 		this.rotation = 0;
 		this.rot_time = 0;
 		this.switch_time = 0;
+		this.sh = shader_ind;
 
 		let s = .04;
 		this.symbols = [[-.5*s,s,0, .5*s,s,0,
@@ -19,31 +20,29 @@ class Matrix_Rain{
 						 [-.5*s,-s,0, .5*s,-s,0,
 						 -.5*s,-s,0, 0,s,0,
 						 .5*s,-s,0, 0,s,0]];
-
-		this.sym_len = this.symbols[0].length;
 		this.offsets = [];
 		for(let i = 0; i < len; i++){
-			this.offsets.push(exp_map(i, [0, len], [.1, .005], .25));
+			this.offsets.push(exp_map(i, [0, len], [1, .1], .5));
 		}
 
+		this.sym_len = this.symbols[0].length;
 		let vertex_length = num*len*this.sym_len;
 		this.pos_buffer = new Float32Array(vertex_length*this.p_fpv);
 		this.off_buffer = new Float32Array(vertex_length);
 		this.opc_buffer = new Float32Array(vertex_length);
 		this.ang_buffer = new Float32Array(vertex_length);
+		
 		this.fsize = this.pos_buffer.BYTES_PER_ELEMENT;
-
 		this.strands = [];
 		this.curr_sym = [];
-		this.st_b = [30, 80];
 
 		let r_b = [1.75, 8]; 
 		let a_b = [Math.PI*.6, Math.PI*2.4];
 		let h_b = [7, -7];
-		let pos_ind = 0;
-		let buf_ind = 0;
+		let st_b = [10000, 15000];
+		let sym_ind = 0;
 		for(let n = 0; n < num; n++){
-			this.strands.push([Math.floor(Math.random()*2*len), map(Math.random(), [0, 1], this.st_b), Math.random()*this.st_b[0]]);
+			this.strands.push([map(Math.random(), [0, 1], st_b), Math.random()*st_b[0]]);
 			let noise_pos = n > num/2 ? n % (num/2) : -n;
 			let r = map(noise.simplex2(noise_pos*.1, 0), [-1, 1], r_b);
 			let a = map(noise.simplex2(noise_pos*.4, 0), [-1, 1], a_b);
@@ -55,23 +54,24 @@ class Matrix_Rain{
 				for(let p = 0; p < 2; p++){
 					let symbol = 0;
 					this.curr_sym.push(symbol);
-					for(let i = 0; i < this.symbols[symbol].length; i++, pos_ind += 3, buf_ind++){
+					for(let i = 0; i < this.symbols[symbol].length; i++, sym_ind++){
 						let vertex_pos = add(this.symbols[symbol].slice(i*3, i*3+3), center_pos);
-						this.pos_buffer[pos_ind + 0] = vertex_pos[0];
-						this.pos_buffer[pos_ind + 1] = vertex_pos[1];
-						this.pos_buffer[pos_ind + 2] = vertex_pos[2];
+						this.pos_buffer[sym_ind*this.p_fpv + 0] = vertex_pos[0];
+						this.pos_buffer[sym_ind*this.p_fpv + 1] = vertex_pos[1];
+						this.pos_buffer[sym_ind*this.p_fpv + 2] = vertex_pos[2];
 
-						this.off_buffer[buf_ind] = p == 0 ? -.04 : .04;
-						this.opc_buffer[buf_ind] = 0;
-						this.ang_buffer[buf_ind] = angle;
+						this.off_buffer[sym_ind] = p == 0 ? -.04 : .04;
+						this.opc_buffer[sym_ind] = 0;
+						this.ang_buffer[sym_ind] = angle;
 					}
 				}
 			}
 		}
 
+		switch_shader(this.sh);
 		this.gl_pos_buf = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.gl_pos_buf);
-		gl.bufferData(gl.ARRAY_BUFFER, this.pos_buffer, gl.STATIC_DRAW);
+		gl.bufferData(gl.ARRAY_BUFFER, this.pos_buffer, gl.DYNAMIC_DRAW);
 		this.a_Position = gl.getAttribLocation(gl.program, 'a_Position');
 		gl.vertexAttribPointer(this.a_Position, this.p_fpv, gl.FLOAT, false, this.fsize*this.p_fpv, 0);
 		gl.enableVertexAttribArray(this.a_Position);
@@ -102,8 +102,9 @@ class Matrix_Rain{
 	}
 
 	draw(){
+		switch_shader(this.sh);
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.gl_pos_buf);
-		gl.bufferData(gl.ARRAY_BUFFER, this.pos_buffer, gl.STATIC_DRAW);
+		gl.bufferData(gl.ARRAY_BUFFER, this.pos_buffer, gl.DYNAMIC_DRAW);
 		gl.vertexAttribPointer(this.a_Position, this.p_fpv, gl.FLOAT, false, this.fsize*this.p_fpv, 0);
 		
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.gl_ang_buf);
@@ -131,19 +132,18 @@ class Matrix_Rain{
 
 		let f_b = [.2, 1];
 		for(let i = 0; i < this.num; i++){
-			this.strands[i][2] += elapsed;
-			if(this.strands[i][2] > this.strands[i][1]){
-				this.strands[i][2] = 0;
-				this.strands[i][0] = (this.strands[i][0] + 1) % (2*this.len);
-			}
+			this.strands[i][1] += elapsed;
+			this.strands[i][1] = this.strands[i][1] % this.strands[i][0];
+			let sym_ind = Math.floor(map(this.strands[i][1], [0, this.strands[i][0]], [0, 2*this.len]));
+
 			let drop_len = map(fft.sub_pro(map(i % 10, [0, 10], f_b), map(i % 10, [0, 10], f_b)), [0, 255], [this.len*.2, this.len*.5]);
 			for(let j = 0; j < 2*this.len; j++){
-				let d = this.strands[i][0] - j >= 0 ? this.strands[i][0] - j : this.strands[i][0] + 2*this.len - j;
+				let d = sym_ind - j >= 0 ? sym_ind - j : sym_ind + 2*this.len - j;
 				let opacity = d == 0 ? .9 : exp_map(d, [0, drop_len], [.7, 0], .8);
 				let vertex_start = (i*2*this.len + j)*this.sym_len;
 				for(let k = 0; k < this.sym_len/this.p_fpv; k++){
 					this.opc_buffer[vertex_start + k] = opacity;
-					this.off_buffer[vertex_start + k] = (j % 2 == 0 ? -1 : 1) * this.offsets[d];
+					this.off_buffer[vertex_start + k] = (j % 2 == 0 ? -.1 : .1) * this.offsets[d];
 				}
 			}
 		}
@@ -160,7 +160,6 @@ class Matrix_Rain{
 				this.curr_sym[sym_ind] = symbol;
 			}
 		}
-
 	}
 }
 

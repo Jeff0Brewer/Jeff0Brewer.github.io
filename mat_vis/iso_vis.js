@@ -1,7 +1,8 @@
 //isosphere based music visualization
 class Iso{
-	constructor(p_fpv){
+	constructor(p_fpv, shader_ind){
 		this.p_fpv = p_fpv;
+		this.sh = shader_ind;
 		this.p = {
 			scale: [.4, 2, 4, 6, 8, 10],
 			weight: norm([1, 1, 1, 1, 1, 1]),
@@ -98,6 +99,8 @@ class Iso{
 			this.flr_buffer[pos_ind/3] = 0.1;
 		}
 
+
+		switch_shader(this.sh);
 		this.gl_pos_buf = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.gl_pos_buf);
 		gl.bufferData(gl.ARRAY_BUFFER, this.pos_buffer, gl.STATIC_DRAW);
@@ -127,6 +130,7 @@ class Iso{
 	}
 
 	draw(){
+		switch_shader(this.sh);
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.gl_pos_buf);
 		gl.vertexAttribPointer(this.a_Position, this.p_fpv, gl.FLOAT, false, this.fsize*this.p_fpv, 0);
 		

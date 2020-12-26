@@ -51,13 +51,6 @@
 			v_Color = vec4(1.0, 1.0, 1.0, u_Alpha);
 		}
 	</script>
-	<script id="f_iso" type="glsl">
-		precision highp float;
-		varying vec4 v_Color;
-		void main(){
-			gl_FragColor = v_Color;
-		}
-	</script>
 	<script id="v_mxr" type="glsl">
 		attribute vec4 a_Position;
 		attribute float a_Offset;
@@ -73,21 +66,26 @@
 		varying vec4 v_Color;
 
 		void main(){
+			float strand_bound = 8.0;
 			float angle = a_Angle + u_Rotation;
 			if(a_Position.x < 0.0){ 
 				angle = -1.0*angle; 
 			}
 			vec4 pos = a_Position + vec4(cos(angle)*a_Offset, 0.0, sin(angle)*a_Offset, 0.0);
-			float warp_amount = .3;
-			if(length(pos)/8.0 < u_Warp){
-				warp_amount = .9;
+			float warp_amount = .2;
+			if(length(pos)/strand_bound < u_Warp){
+				warp_amount = 1.0;
 			}
-			pos = vec4(pos.xyz + normalize(pos.xyz)*u_Warp*warp_amount*pow(length(pos.xyz)/10.0, .25), pos.w);
+			if(length(pos)/8.0 < u_Warp*0.5){
+				warp_amount = .6;
+			}
+			pos = vec4(pos.xyz + normalize(pos.xyz)*u_Warp*warp_amount*pow(length(pos.xyz)/strand_bound, .25), pos.w);
 			gl_Position = u_ProjMatrix * u_ViewMatrix * u_ModelMatrix * pos;
+			gl_PointSize = 10.0/gl_Position.w;
 			v_Color = vec4(1.0, 1.0, 1.0, a_Opacity);
 		}
 	</script>
-	<script id="f_mxr" type="glsl">
+	<script id="f_solid" type="glsl">
 		precision highp float;
 		varying vec4 v_Color;
 		void main(){

@@ -1,10 +1,11 @@
 //a rectangle to draw textures on
 class TexFill{
-	constructor(w, h){
+	constructor(w, h, shader_ind){
 		this.p_fpv = 2;
 		this.t_fpv = 2;
 		this.w = w;
 		this.h = h;
+		this.sh = shader_ind;
 		let points = [[-w/2,-h/2],[w/2,-h/2],[-w/2,h/2],[w/2,h/2]];
 		let tcoord = [[0,0],[1,0],[0,1],[1,1]];
 		this.pos_buffer = new Float32Array(this.p_fpv*points.length);
@@ -19,6 +20,7 @@ class TexFill{
 			}
 		}
 
+		switch_shader(this.sh);
 		this.gl_pos_buf = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.gl_pos_buf);
 		gl.bufferData(gl.ARRAY_BUFFER, this.pos_buffer, gl.STATIC_DRAW);
@@ -39,6 +41,7 @@ class TexFill{
 	}
 
 	draw(fft){
+		switch_shader(this.sh);
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.gl_pos_buf);
 		gl.vertexAttribPointer(this.a_Position, this.p_fpv, gl.FLOAT, false, this.fsize*this.p_fpv, 0);
 
