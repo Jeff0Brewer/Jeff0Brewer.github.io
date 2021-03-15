@@ -12,7 +12,7 @@ canvas.height = window.innerHeight*window.devicePixelRatio;
 var fft = new FFT();
 
 //initialize menu control object
-let file = 'COSMIC - Sensei.mp3'
+let file = 'Petit Biscuit - Memories.mp3'
 var menu = new Menu();
 menu.add_item(file.substring(0, file.lastIndexOf('.')), file);
 menu.select_item(0);
