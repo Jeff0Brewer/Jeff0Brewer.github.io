@@ -61,11 +61,11 @@ function main(){
 			switch_fb(1);
 			gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
 
-			dsk.update(elapsed, fft);
-			dsk.draw();
-
 			mxr.update(elapsed, fft);
 			mxr.draw();
+
+			dsk.update(elapsed, fft);
+			dsk.draw();
 
 			iso.update(elapsed, fft);
 			iso.draw();
