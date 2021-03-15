@@ -8,13 +8,13 @@ class Disk{
 
 		this.fpv = 7;
 		this.warp = 0;
-		this.buffer = new Float32Array(2*this.detail*2*this.fpv);
+		this.buffer = new Float32Array(2*(this.detail + 1)*2*this.fpv);
 		this.fsize = this.buffer.BYTES_PER_ELEMENT;
 		let z = 0;
 		let a = Math.PI/2;
 		let stp = Math.PI*2/(this.detail - 1);
 		let buf_ind = 0;
-		for(let i = 0; i <= this.detail; i++, a += stp){
+		for(let i = 0; i < this.detail; i++, a += stp){
 			this.buffer[buf_ind    ] = Math.cos(a)*this.or;
 			this.buffer[buf_ind + 1] = Math.sin(a)*this.or;
 			this.buffer[buf_ind + 2] = z;
@@ -33,7 +33,7 @@ class Disk{
 			buf_ind += this.fpv;
 		}
 		this.buf_mid = buf_ind;
-		for(let i = 0; i <= this.detail; i++, a += stp){
+		for(let i = 0; i < this.detail; i++, a += stp){
 			this.buffer[buf_ind    ] = Math.cos(a)*this.ir;
 			this.buffer[buf_ind + 1] = Math.sin(a)*this.ir;
 			this.buffer[buf_ind + 2] = z;
