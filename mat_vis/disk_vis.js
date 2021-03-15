@@ -8,7 +8,7 @@ class Disk{
 
 		this.fpv = 7;
 		this.warp = 0;
-		this.buffer = new Float32Array(this.detail*2*this.fpv);
+		this.buffer = new Float32Array(2*this.detail*2*this.fpv);
 		this.fsize = this.buffer.BYTES_PER_ELEMENT;
 		let z = 0;
 		let a = Math.PI/2;
@@ -30,6 +30,25 @@ class Disk{
 			this.buffer[buf_ind + 4] = 1;
 			this.buffer[buf_ind + 5] = 1;
 			this.buffer[buf_ind + 6] = 1;
+			buf_ind += this.fpv;
+		}
+		this.buf_mid = buf_ind;
+		for(let i = 0; i <= this.detail; i++, a += stp){
+			this.buffer[buf_ind    ] = Math.cos(a)*this.ir;
+			this.buffer[buf_ind + 1] = Math.sin(a)*this.ir;
+			this.buffer[buf_ind + 2] = z;
+			this.buffer[buf_ind + 3] = 0;
+			this.buffer[buf_ind + 4] = 0;
+			this.buffer[buf_ind + 5] = 0;
+			this.buffer[buf_ind + 6] = .7;
+			buf_ind += this.fpv;
+			this.buffer[buf_ind    ] = 0;
+			this.buffer[buf_ind + 1] = 0;
+			this.buffer[buf_ind + 2] = z;
+			this.buffer[buf_ind + 3] = 0;
+			this.buffer[buf_ind + 4] = 0;
+			this.buffer[buf_ind + 5] = 0;
+			this.buffer[buf_ind + 6] = .7;
 			buf_ind += this.fpv;
 		}
 		this.detail *= .5;
@@ -59,13 +78,14 @@ class Disk{
 		gl.vertexAttribPointer(this.a_Color, 4, gl.FLOAT, false, this.fsize*this.fpv, this.fsize*3);
 
 		gl.uniform1f(this.u_Warp, this.warp);
-		gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.buffer.length / this.fpv);
+		gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.buf_mid / this.fpv);
+		gl.drawArrays(gl.TRIANGLE_STRIP, this.buf_mid / this.fpv, (this.buffer.length - this.buf_mid) / this.fpv);
 	}
 
 	update(elapsed, fft){
-		for(let i = 0; i < this.detail; i++){
+		for(let i = 0; i <= this.detail; i++){
 			let color = exp_map(fft.sub_pro(.8*i/this.detail, .8*(i + 1)/this.detail), [0, 255], [0, 1], .85);
-			let v_s = [i*2*this.fpv, this.buffer.length - (i + 1)*2*this.fpv];
+			let v_s = [i*2*this.fpv, this.buf_mid - (i + 1)*2*this.fpv];
 			for(let side = 0; side < 2; side++){
 				for(let vrt = 0; vrt < 2; vrt++){
 					for(let col = 3; col < 7; col++){
