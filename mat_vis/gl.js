@@ -43,6 +43,7 @@ function setup_gl(){
 
 	programs.push(create_program(document.getElementById('v_iso').text, document.getElementById('f_solid').text));
 	programs.push(create_program(document.getElementById('v_mxr').text, document.getElementById('f_solid').text));
+	programs.push(create_program(document.getElementById('v_dsk').text, document.getElementById('f_solid').text));
 	programs.push(create_program(document.getElementById('v_tex').text, document.getElementById('f_tex').text));
 }
 
