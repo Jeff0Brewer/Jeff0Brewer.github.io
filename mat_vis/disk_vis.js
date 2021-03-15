@@ -7,9 +7,9 @@ class Disk{
 		this.sh = shader_ind; 
 
 		this.fpv = 7;
-		this.warp = 0;
 		this.buffer = new Float32Array(2*(this.detail + 1)*2*this.fpv);
 		this.fsize = this.buffer.BYTES_PER_ELEMENT;
+		
 		let z = 0;
 		let a = Math.PI/2;
 		let stp = Math.PI*2/(this.detail - 1);
@@ -33,17 +33,18 @@ class Disk{
 			buf_ind += this.fpv;
 		}
 		this.buf_mid = buf_ind;
+
+		this.buffer[buf_ind    ] = 0;
+		this.buffer[buf_ind + 1] = 0;
+		this.buffer[buf_ind + 2] = z;
+		this.buffer[buf_ind + 3] = 0;
+		this.buffer[buf_ind + 4] = 0;
+		this.buffer[buf_ind + 5] = 0;
+		this.buffer[buf_ind + 6] = .7;
+		buf_ind += this.fpv;
 		for(let i = 0; i < this.detail; i++, a += stp){
 			this.buffer[buf_ind    ] = Math.cos(a)*this.ir;
 			this.buffer[buf_ind + 1] = Math.sin(a)*this.ir;
-			this.buffer[buf_ind + 2] = z;
-			this.buffer[buf_ind + 3] = 0;
-			this.buffer[buf_ind + 4] = 0;
-			this.buffer[buf_ind + 5] = 0;
-			this.buffer[buf_ind + 6] = .7;
-			buf_ind += this.fpv;
-			this.buffer[buf_ind    ] = 0;
-			this.buffer[buf_ind + 1] = 0;
 			this.buffer[buf_ind + 2] = z;
 			this.buffer[buf_ind + 3] = 0;
 			this.buffer[buf_ind + 4] = 0;
@@ -65,9 +66,6 @@ class Disk{
 		this.a_Color = gl.getAttribLocation(gl.program, 'a_Color');
 		gl.vertexAttribPointer(this.a_Color, 4, gl.FLOAT, false, this.fsize*this.fpv, this.fsize*3);
 		gl.enableVertexAttribArray(this.a_Color);
-
-		this.u_Warp = gl.getUniformLocation(gl.program, 'u_Warp');
-		gl.uniform3f(gl.getUniformLocation(gl.program, 'u_WarpCurve'), .2, 1.0, .6);
 	}
 
 	draw(){
@@ -77,9 +75,8 @@ class Disk{
 		gl.vertexAttribPointer(this.a_Position, 3, gl.FLOAT, false, this.fsize*this.fpv, 0);
 		gl.vertexAttribPointer(this.a_Color, 4, gl.FLOAT, false, this.fsize*this.fpv, this.fsize*3);
 
-		gl.uniform1f(this.u_Warp, this.warp);
 		gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.buf_mid / this.fpv);
-		gl.drawArrays(gl.TRIANGLE_STRIP, this.buf_mid / this.fpv, (this.buffer.length - this.buf_mid) / this.fpv);
+		gl.drawArrays(gl.TRIANGLE_FAN, this.buf_mid / this.fpv, (this.buffer.length - this.buf_mid) / this.fpv);
 	}
 
 	update(elapsed, fft){
@@ -94,9 +91,6 @@ class Disk{
 				}
 			}
 		}
-
-		this.warp = this.warp*.85 + exp_map(fft.sub_pro(0, .1), [0, 255], [0, 1], 3)*.15;
-
 	}
 }
 
