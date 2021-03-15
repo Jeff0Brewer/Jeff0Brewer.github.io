@@ -84,7 +84,7 @@ class Disk{
 
 	update(elapsed, fft){
 		for(let i = 0; i <= this.detail; i++){
-			let color = exp_map(fft.sub_pro(.8*i/this.detail, .8*(i + 1)/this.detail), [0, 255], [0, 1], .85);
+			let color = exp_map(fft.sub_pro(.8*i/this.detail, .8*(i + 1)/this.detail), [0, 255], [0, 1], 1.25);
 			let v_s = [i*2*this.fpv, this.buf_mid - (i + 1)*2*this.fpv];
 			for(let side = 0; side < 2; side++){
 				for(let vrt = 0; vrt < 2; vrt++){
