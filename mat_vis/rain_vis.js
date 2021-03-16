@@ -10,7 +10,7 @@ class Matrix_Rain{
 		this.switch_time = 0;
 		this.sh = shader_ind;
 
-		let s = .035;
+		let s = .04;
 		this.symbols = [[-.5*s,s,0, .5*s,s,0,
 						 -.5*s,s,0, 0,-s,0,
 						 .5*s,s,0, 0,-s,0],
@@ -36,8 +36,8 @@ class Matrix_Rain{
 		this.strands = [];
 		this.curr_sym = [];
 
-		let r_b = [1.75, 8]; 
-		let a_b = [Math.PI*.6, Math.PI*2.4];
+		let r_b = [1.75, 10]; 
+		let a_b = [Math.PI, Math.PI*2];
 		let h_b = [7, -7];
 		let st_b = [10000, 15000];
 		let sym_ind = 0;
@@ -126,7 +126,7 @@ class Matrix_Rain{
 	}
 
 	update(elapsed, fft){
-		this.warp = this.warp*.85 + exp_map(fft.sub_pro(0, .1), [0, 255], [0, 1], 3)*.15;
+		this.warp = this.warp*.85 + exp_map(fft.sub_pro(0, .1), [0, 255], [0, 2], 3)*.15;
 
 		let rot_spd = 5000;
 		this.rot_time = (this.rot_time + elapsed) % rot_spd;
